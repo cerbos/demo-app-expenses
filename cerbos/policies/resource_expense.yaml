@@ -1,0 +1,106 @@
+---
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  version: "default"
+  # Importing `common_roles` in so they can be used in the resource policy.
+  importDerivedRoles:
+    - common_roles
+
+  # This resource file is reviewed for when checking permissions when a resource
+  # is of `kind` "expense:object"
+  resource: "expense"
+
+  rules:
+    # If the `principal`s role is `admin` then all the actions are allowed.
+    - actions: ["*"]
+      effect: EFFECT_ALLOW
+      roles:
+        - ADMIN
+
+    # A `principal` that belongs to any of these groups "OWNER", "FINANCE" or
+    # "REGION_MANAGER" is allowed to perform action "view".
+    - actions: ["view"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - OWNER
+        - FINANCE
+        - REGION_MANAGER
+
+    # A `principal` that belongs to any of these groups "OWNER" or "FINANCE" is
+    # allowed to view the approver field via "view:approver" action.
+    - actions: ["view:approver"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - FINANCE
+        - FINANCE_MANAGER
+
+    # A `principal` that owns the resource can view the approver if its is approved
+    - actions: ["view:approver"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - OWNER
+      condition:
+        match:
+          expr: request.resource.attr.status == "APPROVED"
+
+    - actions: ["create"]
+      effect: EFFECT_ALLOW
+      roles:
+        - USER
+        - MANAGER
+
+    # A `principal` that owns the resource can update if it is OPEN
+    - actions: ["update"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - OWNER
+      condition:
+        match:
+          expr: request.resource.attr.status == "OPEN"
+
+    # A `principal` that belongs to "FINANCE_MANAGER" role is allowed to perform "approve"
+    # for any amount if they did not create it
+    - actions: ["approve"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - FINANCE_MANAGER
+      condition:
+        match:
+          all:
+            of:
+              - expr: request.resource.attr.ownerId != request.principal.id
+              - expr: request.resource.attr.status == "OPEN"
+
+    # A `principal` that belongs to "FINANCE" role is allowed to perform "approve"
+    # action if the amount is <$10000 and they did not create it
+    - actions: ["approve"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - FINANCE
+      condition:
+        match:
+          all:
+            of:
+              - expr: request.resource.attr.amount < 50000
+              - expr: request.resource.attr.ownerId != request.principal.id
+              - expr: request.resource.attr.status == "OPEN"
+
+    # A `principal` that belongs to "FINANCE_MANAGER" role is allowed to perform "delete"
+    # action.
+    - actions: ["delete"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - FINANCE_MANAGER
+
+    # A `principal` that owns the resource, with the status of OPEN and created
+    # within the last hour can perform the "delete"
+    - actions: ["delete"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - OWNER
+      condition:
+        match:
+          all:
+            of:
+              - expr: request.resource.attr.status == "OPEN"
+              # - expr: timestamp(request.resource.attr.createdAt).timeSince() < duration("1h")
