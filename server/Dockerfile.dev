@@ -6,12 +6,6 @@ RUN apt-get install -y openssl
 WORKDIR /app
 EXPOSE 9080
 
-# FROM base as production
-# ENV NODE_ENV=production
-# RUN npm ci
-# COPY . /
-# CMD ["node", "bin/www"]
-
 FROM base as dev
 COPY . /app
 RUN npm install

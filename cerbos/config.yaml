@@ -12,3 +12,10 @@ tracing:
   exporter: otlp
   otlp:
     collectorEndpoint: "jaeger:4318"
+audit:
+  enabled: true
+  accessLogsEnabled: true
+  decisionLogsEnabled: true
+  backend: file
+  file:
+    path: stdout

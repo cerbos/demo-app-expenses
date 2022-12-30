@@ -35,7 +35,7 @@ function StatsProvider({ children }: StatsProviderProps) {
     ["stats"],
     (): Promise<{ serverChecks: number }> =>
       axios
-        .get(`${import.meta.env.VITE_API_HOST}/_/metrics`, {
+        .get(`${import.meta.env.VITE_API_HOST}/_/usage`, {
           headers: {
             Authorization: users.ian.id,
           },
@@ -63,7 +63,7 @@ function StatsProvider({ children }: StatsProviderProps) {
         },
         reset: () => {
           axios.post(
-            "http://localhost:8000/_/metrics/reset",
+            `${import.meta.env.VITE_API_HOST}/_/usage/reset`,
             {},
             {
               headers: {

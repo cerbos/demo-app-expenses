@@ -5,6 +5,40 @@ volumes:
   grafana-data: {}
 
 services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+      target: dev
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    ports:
+      - "9980:9980"
+    restart: unless-stopped
+    environment:
+      - PORT=9980
+      - CERBOS_HOST=cerbos:3593
+      - OLTP_COLLECTOR=jaeger:4317
+    depends_on:
+      - cerbos
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+      target: dev
+    volumes:
+      - ./client:/client
+      - /app/node_modules
+    ports:
+      - "9990:9990"
+    restart: unless-stopped
+    environment:
+      - VITE_API_HOST=http://localhost:9980/api
+    depends_on:
+      - server
+
   cerbos:
     image: ghcr.io/cerbos/cerbos:latest
     ports:
@@ -23,45 +57,10 @@ services:
       - jaeger
     command: "server --config=/config.yaml --set=tracing.otlp.collectorEndpoint=jaeger:4317"
 
-  client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile.dev
-      target: dev
-    volumes:
-      - ./client:/client
-      - /app/node_modules
-    ports:
-      - "9990:9990"
-    restart: unless-stopped
-    environment:
-      - VITE_API_HOST=http://localhost:9980
-    depends_on:
-      - server
-      
-  server:
-    build:
-      context: ./server
-      dockerfile: Dockerfile.dev
-      target: dev
-    volumes:
-      - ./server:/app
-      - /app/node_modules
-    ports:
-      - "9980:9980"
-    restart: unless-stopped
-    environment:
-      - PORT=9980
-      - CERBOS_HOST=cerbos:3593
-      - OLTP_COLLECTOR=jaeger:4318
-    depends_on:
-      - cerbos
-
   jaeger:
     image: jaegertracing/all-in-one:latest
     ports:
       - "16686:16686"
-      - "4318:4318"
       - "4317:4317"
     environment:
       - COLLECTOR_OTLP_ENABLED=true
@@ -72,7 +71,7 @@ services:
     container_name: prometheus
     restart: unless-stopped
     volumes:
-      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./infra/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -89,6 +88,6 @@ services:
       - 3000:3000
     restart: unless-stopped
     volumes:
-      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./infra/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - grafana-data:/var/lib/grafana
             

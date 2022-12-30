@@ -1,5 +1,6 @@
 import winston from 'winston'
 import morgan, { StreamOptions } from "morgan";
+import { Request, Response } from 'express';
 
 const levels = {
   error: 0,
@@ -40,7 +41,7 @@ const transports = [
 const log = winston.createLogger({
   level: level(),
   levels,
-  format,
+  format: winston.format.json(),
   transports,
 })
 
@@ -56,9 +57,10 @@ const stream: StreamOptions = {
 // This method is not really needed here since 
 // we already told to the logger that it should print
 // only warning and error messages in production.
-const skip = () => {
-  const env = process.env.NODE_ENV || "development";
-  return env !== "development";
+const skip = (req: Request, res: Response) => {
+  if (["/metrics", "/health", "/_/usage"].includes(req.path)) return true;
+  if (req.method === "OPTIONS") return true;
+  return false;
 };
 
 // Build the morgan middleware

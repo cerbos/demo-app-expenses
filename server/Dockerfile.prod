@@ -11,8 +11,6 @@ RUN npm install
 RUN npm run build
 
 
-
-
 FROM node:18-slim as production
 RUN apt-get update && apt-get install -y openssl
 RUN mkdir -p /app/node_modules && chown -R node:node /app
@@ -26,4 +24,6 @@ COPY --chown=node:node --from=builder /app/prisma ./prisma
 RUN npx prisma generate
 
 EXPOSE 9080
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start:prod"]
+
+LABEL org.opencontainers.image.source=https://github.com/cerbos/demo-app-expenses

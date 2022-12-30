@@ -6,7 +6,7 @@ import * as api from '@opentelemetry/api'
 import { PrismaInstrumentation } from '@prisma/instrumentation'
 import { Resource } from '@opentelemetry/resources'
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc'
 import { registerInstrumentations } from '@opentelemetry/instrumentation'
 import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node'
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node'
@@ -16,8 +16,6 @@ const contextManager = new AsyncHooksContextManager().enable()
 
 api.context.setGlobalContextManager(contextManager)
 
-
-
 // Configure the trace provider
 const provider = new NodeTracerProvider({
   resource: new Resource({
@@ -25,20 +23,24 @@ const provider = new NodeTracerProvider({
   }),
 })
 
-// Configure how spans are processed and exported. In this case we're sending spans
-// as we receive them to an OTLP-compatible collector (e.g. Jaeger).
-provider.addSpanProcessor(new SimpleSpanProcessor(new OTLPTraceExporter({ url: `http://${process.env.OLTP_COLLECTOR}/v1/traces`, })))
+const exporter = new OTLPTraceExporter({ url: `http://${process.env.OLTP_COLLECTOR}` });
 
+provider.addSpanProcessor(new SimpleSpanProcessor(exporter))
+
+
+// Register the provider globally
+provider.register();
+['SIGINT', 'SIGTERM'].forEach(signal => {
+  process.on(signal, () => provider.shutdown().catch(console.error));
+});
 
 // Register your auto-instrumentors
 registerInstrumentations({
   tracerProvider: provider,
   instrumentations: [
-
+    getNodeAutoInstrumentations(),
     new PrismaInstrumentation(),
-    // new GrpcInstrumentation(),
-    getNodeAutoInstrumentations()
   ],
 })
-// Register the provider globally
-provider.register()
+
+export const tracer = api.trace.getTracer('expenses-api');

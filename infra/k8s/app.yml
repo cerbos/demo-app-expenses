@@ -1,0 +1,128 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-client
+  labels:
+    app: app-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-client
+  template:
+    metadata:
+      labels:
+        app: app-client
+    spec:
+      containers:
+        - name: app-client
+          image: ghcr.io/cerbos/demo-app-expenses-client:latest
+          ports:
+            - containerPort: 80
+              name: ui
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-client-service
+spec:
+  selector:
+    app: app-client
+  ports:
+    - name: ui
+      protocol: TCP
+      port: 8080
+      targetPort: ui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-server
+  labels:
+    app: app-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-server
+  template:
+    metadata:
+      labels:
+        app: app-server
+    spec:
+      containers:
+        - name: app-server
+          image: ghcr.io/cerbos/demo-app-expenses-server:latest
+          env:
+            - name: PORT
+              value: "9999"
+            - name: CERBOS_HOST
+              value: cerbos-service.default.svc.cluster.local:3593
+            - name: OLTP_COLLECTOR
+              value: jaeger-service.default.svc.cluster.local:4317
+            - name: NODE_ENV
+              value: development
+          ports:
+            - containerPort: 9999
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-server-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: app-server
+  ports:
+    - protocol: TCP
+      port: 9999
+      targetPort: 9999
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app-client-service
+                port:
+                  number: 8080
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: app-server-service
+                port:
+                  number: 9999
+          - path: /jaeger
+            pathType: Prefix
+            backend:
+              service:
+                name: jaeger-service
+                port:
+                  number: 16686
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: infra-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /grafana(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana-service
+                port:
+                  number: 3000
