@@ -1,0 +1,94 @@
+version: "3.8"
+
+volumes:
+  prometheus_data: {}
+  grafana-data: {}
+
+services:
+  cerbos:
+    image: ghcr.io/cerbos/cerbos:latest
+    ports:
+      - "3592:3592"
+      - "3593:3593"
+    expose:
+      - '3592'
+      - '3593'
+    environment:
+      - CERBOS_NO_TELEMETRY=1
+    volumes:
+      - ./cerbos/policies:/policies
+      - ./cerbos/config.yaml:/config.yaml
+    restart: unless-stopped
+    depends_on:
+      - jaeger
+    command: "server --config=/config.yaml --set=tracing.otlp.collectorEndpoint=jaeger:4317"
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+      target: dev
+    volumes:
+      - ./client:/client
+      - /app/node_modules
+    ports:
+      - "9990:9990"
+    restart: unless-stopped
+    environment:
+      - VITE_API_HOST=http://localhost:9980
+    depends_on:
+      - server
+      
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+      target: dev
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    ports:
+      - "9980:9980"
+    restart: unless-stopped
+    environment:
+      - PORT=9980
+      - CERBOS_HOST=cerbos:3593
+      - OLTP_COLLECTOR=jaeger:4318
+    depends_on:
+      - cerbos
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+      - "4318:4318"
+      - "4317:4317"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    expose:
+      - 9090
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - grafana-data:/var/lib/grafana
+            

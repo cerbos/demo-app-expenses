@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host --port 9990 --clearScreen=false",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "build:cerbos-lite": "../cerbos/generate-cerbos-lite.sh ../cerbos/policies public"

@@ -1,6 +1,13 @@
+import 'dotenv/config'
+
 import express from "express";
 import { GRPC } from "@cerbos/grpc";
 import cors from "cors";
+import promBundle from "express-prom-bundle";
+const metricsMiddleware = promBundle({ includeMethod: true, includePath: true, includeStatusCode: true });
+
+
+
 
 declare global {
   namespace Express {
@@ -17,12 +24,18 @@ declare global {
   }
 }
 
-import { PrismaClient } from '@prisma/client'
+
 import queryPlanToPrisma from "@cerbos/orm-prisma";
-const prisma = new PrismaClient()
+
+import log, { morganMiddleware } from './logger';
+import { prisma } from './db';
+import authenticate from './authenticate';
+
+
+const PORT = process.env.PORT || 8000;
 
 // Local PDP
-const cerbos = new GRPC("localhost:3593", {
+const cerbos = new GRPC(process.env.CERBOS_HOST || "localhost:3593", {
   tls: false,
 });
 
@@ -32,29 +45,11 @@ let metrics = {
 };
 
 const app = express();
+app.use(morganMiddleware);
+app.use(metricsMiddleware);
 app.use(express.json());
 app.use(cors());
-
-app.use(async (req, res, next) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      id: req.headers["authorization"]
-    }
-  })
-  if (!user) {
-    res.status(401).send("Unauthorized");
-  } else {
-    req.user = {
-      id: user.id,
-      roles: JSON.parse(user.roles),
-      attributes: {
-        department: user.department,
-        region: user.region || undefined,
-      }
-    };
-    next();
-  }
-});
+app.use(authenticate);
 
 app.get("/", (req, res) => {
   res.json({
@@ -376,7 +371,18 @@ app.post("/_/metrics/reset", (req, res) => {
   return res.json();
 });
 
-app.listen(8000, () => {
-  console.log("Server is running on port 8000");
-  console.log("Run 'npm run reset' to reset the DB with seed data")
+app.get("/health", async (req, res) => {
+  try {
+    await prisma.$queryRaw`select 1;`
+    await cerbos.serverInfo();
+    res.json({ status: "ok" })
+  } catch (e) {
+    res.status(500).json({ status: "not ok", error: e })
+  }
+})
+
+
+app.listen(PORT, () => {
+  log.info(`Server is running on port ${PORT}`);
+  log.info("Run 'npm run reset' to reset the DB with seed data")
 });

@@ -1,0 +1,16 @@
+FROM node:18-slim as base
+
+WORKDIR /app
+EXPOSE 9990
+
+# FROM base as production
+# ENV NODE_ENV=production
+# RUN npm ci
+# COPY . /
+# CMD ["node", "bin/www"]
+
+FROM base as dev
+COPY . /app
+RUN npm install
+
+CMD ["npm", "run", "dev"]

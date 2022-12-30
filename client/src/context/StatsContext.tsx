@@ -35,7 +35,7 @@ function StatsProvider({ children }: StatsProviderProps) {
     ["stats"],
     (): Promise<{ serverChecks: number }> =>
       axios
-        .get("http://localhost:8000/_/metrics", {
+        .get(`${import.meta.env.VITE_API_HOST}/_/metrics`, {
           headers: {
             Authorization: users.ian.id,
           },
