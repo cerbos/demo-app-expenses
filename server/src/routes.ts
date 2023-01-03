@@ -4,7 +4,6 @@ import { cerbos } from "./cerbos";
 import { prisma } from "./db";
 import { tracer } from "./tracing";
 
-
 const router = express.Router();
 
 // Metrics

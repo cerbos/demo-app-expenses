@@ -1,8 +1,11 @@
 FROM node:18-slim as client-builder
+RUN apt-get update && apt-get install -y zip curl
 WORKDIR /app
 ARG VITE_API_HOST
 ENV VITE_API_HOST $VITE_API_HOST
 COPY ./client .
+COPY ./cerbos /cerbos
+RUN npm run build:cerbos-lite
 RUN npm install
 RUN VITE_API_HOST=/api npm run build
 

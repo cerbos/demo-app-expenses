@@ -8,6 +8,8 @@ import { prisma } from './db';
 import authenticate from './authenticate';
 import { cerbos } from './cerbos';
 import router from './routes';
+import path from 'path';
+
 
 const PORT = process.env.PORT || 8000;
 
@@ -32,7 +34,10 @@ app.get("/health", async (req, res) => {
 })
 
 if (process.env.SERVE_STATIC) {
-  app.use(express.static('./dist'))
+  const staticPath = path.join(__dirname, "dist")
+  log.info(`Serving static site from ${staticPath}`)
+  app.use(express.static(staticPath))
+  app.get('*', (req, res) => res.sendFile(path.join(staticPath, 'index.html')))
 }
 
 app.listen(PORT, () => {
