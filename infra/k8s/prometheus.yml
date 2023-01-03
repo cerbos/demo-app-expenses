@@ -100,8 +100,8 @@ data:
         static_configs:
           - targets: ["cerbos-service.default.svc.cluster.local:3592"]
 
-      - job_name: "expenses-api"
+      - job_name: "expenses"
         scrape_interval: 5s
         metrics_path: /metrics
         static_configs:
-          - targets: ["app-server-service.default.svc.cluster.local:9999"]
+          - targets: ["app-expenses-service.default.svc.cluster.local:8000"]

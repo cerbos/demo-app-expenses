@@ -1,61 +1,26 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: app-client
-  labels:
-    app: app-client
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: app-client
-  template:
-    metadata:
-      labels:
-        app: app-client
-    spec:
-      containers:
-        - name: app-client
-          image: ghcr.io/cerbos/demo-app-expenses-client:latest
-          ports:
-            - containerPort: 80
-              name: ui
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: app-client-service
-spec:
-  selector:
-    app: app-client
-  ports:
-    - name: ui
-      protocol: TCP
-      port: 8080
-      targetPort: ui
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-server
+  name: app-expenses
   labels:
-    app: app-server
+    app: app-expenses
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app-server
+      app: app-expenses
   template:
     metadata:
       labels:
-        app: app-server
+        app: app-expenses
     spec:
       containers:
-        - name: app-server
-          image: ghcr.io/cerbos/demo-app-expenses-server:latest
+        - name: app-expenses
+          image: ghcr.io/cerbos/demo-app-expenses:latest
           env:
             - name: PORT
-              value: "9999"
+              value: "8000"
             - name: CERBOS_HOST
               value: cerbos-service.default.svc.cluster.local:3593
             - name: OLTP_COLLECTOR
@@ -63,20 +28,20 @@ spec:
             - name: NODE_ENV
               value: development
           ports:
-            - containerPort: 9999
+            - containerPort: 8000
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: app-server-service
+  name: app-expenses-service
 spec:
   type: LoadBalancer
   selector:
-    app: app-server
+    app: app-expenses
   ports:
     - protocol: TCP
-      port: 9999
-      targetPort: 9999
+      port: 8000
+      targetPort: 8000
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -90,16 +55,9 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: app-client-service
+                name: app-expenses-service
                 port:
-                  number: 8080
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: app-server-service
-                port:
-                  number: 9999
+                  number: 8000
           - path: /jaeger
             pathType: Prefix
             backend:
