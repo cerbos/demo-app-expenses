@@ -1,16 +1,15 @@
+import { instrumentations } from './instrumentations' // must be imported first
+
 import {
   SimpleSpanProcessor,
 } from '@opentelemetry/sdk-trace-base'
 import { AsyncHooksContextManager } from '@opentelemetry/context-async-hooks'
 import * as api from '@opentelemetry/api'
-import { PrismaInstrumentation } from '@prisma/instrumentation'
 import { Resource } from '@opentelemetry/resources'
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc'
 import { registerInstrumentations } from '@opentelemetry/instrumentation'
 import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node'
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node'
-
 
 const contextManager = new AsyncHooksContextManager().enable()
 
@@ -37,10 +36,7 @@ provider.register();
 // Register your auto-instrumentors
 registerInstrumentations({
   tracerProvider: provider,
-  instrumentations: [
-    getNodeAutoInstrumentations(),
-    new PrismaInstrumentation(),
-  ],
+  instrumentations,
 })
 
 export const tracer = api.trace.getTracer('expenses-api');
