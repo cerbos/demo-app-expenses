@@ -40,15 +40,17 @@ spec:
               value: {{ .Values.expenses.oltpCollector }}
             - name: NODE_ENV
               value: {{ .Values.expenses.nodeEnv }}
+            - name: SERVE_STATIC
+              value: "1"
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /api/health
+              path: /health
               port: http
           readinessProbe:
             httpGet:
-              path: /api/health
+              path: /health
               port: http

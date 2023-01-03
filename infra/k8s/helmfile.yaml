@@ -1,0 +1,44 @@
+repositories:
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+  - name: cerbos
+    url: https://download.cerbos.dev/helm-charts
+  - name: jaegertracing
+    url: https://jaegertracing.github.io/helm-charts
+  - name: grafana
+    url: https://grafana.github.io/helm-charts
+
+releases:
+  - name: expenses
+    chart: expenses/
+    values:
+      - expenses-values.yaml
+
+  - name: cerbos
+    chart: cerbos/cerbos
+    values:
+      - cerbos-values.yaml
+
+  - name: prometheus
+    namespace: monitoring
+    chart: prometheus-community/prometheus
+
+  - name: jaeger
+    namespace: monitoring
+    chart: jaegertracing/jaeger
+    values:
+      - jaeger-values.yaml
+
+  - name: loki
+    namespace: monitoring
+    chart: bitnami/grafana-loki
+    values:
+      - loki-values.yaml
+
+  - name: grafana
+    namespace: monitoring
+    chart: grafana/grafana
+    values:
+      - grafana-values.yaml

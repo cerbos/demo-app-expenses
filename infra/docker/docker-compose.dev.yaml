@@ -7,11 +7,11 @@ volumes:
 services:
   server:
     build:
-      context: ./server
+      context: ../../server
       dockerfile: Dockerfile.dev
       target: dev
     volumes:
-      - ./server:/app
+      - ../../server:/app
       - /app/node_modules
     ports:
       - "9980:9980"
@@ -25,11 +25,11 @@ services:
 
   client:
     build:
-      context: ./client
+      context: ../../client
       dockerfile: Dockerfile.dev
       target: dev
     volumes:
-      - ./client:/client
+      - ../../client:/client
       - /app/node_modules
     ports:
       - "9990:9990"
@@ -50,8 +50,8 @@ services:
     environment:
       - CERBOS_NO_TELEMETRY=1
     volumes:
-      - ./cerbos/policies:/policies
-      - ./cerbos/config.yaml:/config.yaml
+      - ../../cerbos/policies:/policies
+      - ../../cerbos/config.yaml:/config.yaml
     restart: unless-stopped
     depends_on:
       - jaeger
@@ -71,7 +71,7 @@ services:
     container_name: prometheus
     restart: unless-stopped
     volumes:
-      - ./infra/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -88,6 +88,6 @@ services:
       - 3000:3000
     restart: unless-stopped
     volumes:
-      - ./infra/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - grafana-data:/var/lib/grafana
             
