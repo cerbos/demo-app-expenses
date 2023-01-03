@@ -29,15 +29,15 @@ spec:
             - name: prometheus-config
               mountPath: /etc/prometheus/prometheus.yml
               subPath: config.yaml
-            - mountPath: /prometheus
-              name: pv
+            # - mountPath: /prometheus
+            #   name: pv
       volumes:
         - name: prometheus-config
           configMap:
             name: prometheus-config
-        - name: pv
-          persistentVolumeClaim:
-            claimName: prom-pvc
+        # - name: pv
+        #   persistentVolumeClaim:
+        #     claimName: prom-pvc
 
 # ---
 # apiVersion: v1

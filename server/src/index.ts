@@ -31,6 +31,10 @@ app.get("/health", async (req, res) => {
   }
 })
 
+if (process.env.SERVE_STATIC) {
+  app.use(express.static('./dist'))
+}
+
 app.listen(PORT, () => {
   log.info(`Server is running on port ${PORT}`);
   log.info("Run 'npm run reset' to reset the DB with seed data")
