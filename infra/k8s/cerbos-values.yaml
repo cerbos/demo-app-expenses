@@ -1,0 +1,18 @@
+cerbos:
+  config:
+    server:
+      adminAPI:
+        enabled: true
+        adminCredentials: # default credentials of cerbos:cerbosAdmin
+          username: cerbos
+          passwordHash: JDJ5JDEwJEdEOVFzZDE2VVhoVkR0N2VkUFBVM09nalc0QnNZaC9xc2E4bS9mcUJJcEZXenp5OUpjMi91Cgo=
+    storage:
+      driver: "git"
+      git:
+        protocol: https
+        url: https://github.com/cerbos/cerbos-argo-workflow.git
+        branch: main
+        subDir: cerbos
+        updatePollInterval: 0
+    telemetry:
+      disabled: true
