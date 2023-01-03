@@ -10,6 +10,22 @@ datasources:
         access: proxy
         url: http://prometheus-server.monitoring.svc.cluster.local
         isDefault: true
+      - name: Loki
+        type: loki
+        url: http://loki-grafana-loki-querier.monitoring.svc.cluster.local:3100
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: "default"
+        orgId: 1
+        folder: ""
+        type: file
+        disableDeletion: true
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
 dashboards:
   default:
     expenses:
@@ -140,7 +156,7 @@ dashboards:
                     "uid": "PBFA97CFB590B2093"
                   },
                   "editorMode": "builder",
-                  "expr": "rate(http_request_duration_seconds_count{job=\"expenses\", path=~\"/api/expenses.+\"}[1m])",
+                  "expr": "rate(http_request_duration_seconds_count{app_kubernetes_io_name=\"expenses\", path=~\"/api/expenses.+\"}[1m])",
                   "legendFormat": "{{path}}",
                   "range": true,
                   "refId": "A"
@@ -232,7 +248,7 @@ dashboards:
                     "uid": "PBFA97CFB590B2093"
                   },
                   "editorMode": "code",
-                  "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{job=\"expenses\"}[5m])) by (le))",
+                  "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{app_kubernetes_io_name=\"expenses\"}[5m])) by (le))",
                   "hide": false,
                   "legendFormat": "p50",
                   "range": true,
@@ -244,7 +260,7 @@ dashboards:
                     "uid": "PBFA97CFB590B2093"
                   },
                   "editorMode": "code",
-                  "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"expenses\"}[5m])) by (le))",
+                  "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{app_kubernetes_io_name=\"expenses\"}[5m])) by (le))",
                   "legendFormat": "p95",
                   "range": true,
                   "refId": "p95"
@@ -255,7 +271,7 @@ dashboards:
                     "uid": "PBFA97CFB590B2093"
                   },
                   "editorMode": "code",
-                  "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{job=\"expenses\"}[5m])) by (le))",
+                  "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{app_kubernetes_io_name=\"expenses\"}[5m])) by (le))",
                   "hide": false,
                   "legendFormat": "p99",
                   "range": true,
@@ -361,7 +377,8 @@ dashboards:
                     "uid": "PBFA97CFB590B2093"
                   },
                   "editorMode": "builder",
-                  "expr": "rate(grpc_io_server_sent_messages_per_rpc_count[1m])",
+                  "exemplar": false,
+                  "expr": "rate(grpc_io_server_completed_rpcs{app_kubernetes_io_name=\"cerbos\"}[1m])",
                   "legendFormat": "{{grpc_server_method}}",
                   "range": true,
                   "refId": "A"

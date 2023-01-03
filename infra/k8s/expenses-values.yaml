@@ -2,3 +2,7 @@ podAnnotations:
   prometheus.io/scrape: "true"
   prometheus.io/path: /metrics
   prometheus.io/port: "8000"
+expenses:
+  cerbosHost: cerbos.default.svc.cluster.local:3593
+  oltpCollector: jaeger-collector.monitoring.svc.cluster.local:4317
+  nodeEnv: development

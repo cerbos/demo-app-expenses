@@ -7,7 +7,7 @@ expenses:
 
 image:
   repository: ghcr.io/cerbos/demo-app-expenses
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 

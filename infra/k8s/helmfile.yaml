@@ -24,6 +24,8 @@ releases:
   - name: prometheus
     namespace: monitoring
     chart: prometheus-community/prometheus
+    values:
+      - prom-values.yaml
 
   - name: jaeger
     namespace: monitoring
