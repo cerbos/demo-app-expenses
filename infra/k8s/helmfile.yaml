@@ -9,6 +9,8 @@ repositories:
     url: https://jaegertracing.github.io/helm-charts
   - name: grafana
     url: https://grafana.github.io/helm-charts
+  - name: argo
+    url: https://argoproj.github.io/argo-helm
 
 releases:
   - name: expenses
@@ -44,3 +46,9 @@ releases:
     chart: grafana/grafana
     values:
       - grafana-values.yaml
+
+  - name: argo
+    namespace: argo
+    chart: argo/argo-workflows
+    values:
+      - argo-values.yaml
