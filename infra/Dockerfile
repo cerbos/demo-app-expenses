@@ -24,12 +24,10 @@ RUN npm run build
 
 FROM node:18-slim as production
 RUN apt-get update && apt-get install -y openssl
-RUN mkdir -p /app/node_modules && chown -R node:node /app
+RUN mkdir -p /app && chown -R node:node /app
 WORKDIR /app
 COPY --from=server-builder /app/package*.json ./
-USER node
-ENV NODE_ENV=production
-RUN npm ci
+COPY --from=server-builder /app/node_modules ./node_modules
 COPY --chown=node:node --from=server-builder /app/build ./build
 COPY --chown=node:node --from=server-builder /app/prisma ./prisma
 COPY --chown=node:node --from=client-builder /app/dist ./build/dist
