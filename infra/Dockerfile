@@ -1,5 +1,5 @@
 
-FROM node:18-slim as client-builder
+FROM node:18 as client-builder
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
 RUN \
@@ -11,11 +11,12 @@ ARG VITE_API_HOST
 ENV VITE_API_HOST $VITE_API_HOST
 COPY ./client .
 COPY ./cerbos /cerbos
+RUN chmod +x /cerbos/generate-cerbos-lite.sh
 RUN npm run build:cerbos-lite
 RUN npm install
 RUN VITE_API_HOST=/api npm run build
 
-FROM node:18-slim as server-builder
+FROM node:18 as server-builder
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
 RUN \
