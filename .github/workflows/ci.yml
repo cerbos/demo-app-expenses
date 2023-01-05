@@ -15,7 +15,6 @@ concurrency:
 jobs:
   build-and-upload-docker-image:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     permissions:
       contents: read
       packages: write
@@ -53,7 +52,7 @@ jobs:
           file: infra/Dockerfile
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/arm64/v8,linux/amd64
+          platforms: linux/arm64,linux/amd64
           cache-from: |
             type=registry,ref=${{ steps.meta.outputs.tags }}
             type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main
