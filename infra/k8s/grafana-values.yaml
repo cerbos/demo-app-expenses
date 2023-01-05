@@ -56,7 +56,6 @@ dashboards:
           "editable": true,
           "fiscalYearStartMonth": 0,
           "graphTooltip": 0,
-          "id": 1,
           "links": [],
           "liveNow": false,
           "panels": [
@@ -480,6 +479,7 @@ dashboards:
               "type": "timeseries"
             }
           ],
+          "refresh": "5s",
           "schemaVersion": 37,
           "style": "dark",
           "tags": [],
@@ -487,13 +487,13 @@ dashboards:
             "list": []
           },
           "time": {
-            "from": "now-1h",
+            "from": "now-30m",
             "to": "now"
           },
           "timepicker": {},
           "timezone": "",
           "title": "Expenses Application",
           "uid": "MvKz2qtVk",
-          "version": 2,
+          "version": 1,
           "weekStart": ""
         }
