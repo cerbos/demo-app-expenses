@@ -2,7 +2,10 @@
 FROM node:18-slim as client-builder
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
-RUN apt-get update && apt-get install -y zip curl
+RUN \
+  apt-get update -y && \
+  apt-get install -y apt-utils 2>&1 | grep -v "debconf: delaying package configuration, since apt-utils is not installed" && \
+  apt-get install -y --no-install-recommends zip curl
 WORKDIR /app
 ARG VITE_API_HOST
 ENV VITE_API_HOST $VITE_API_HOST
@@ -15,7 +18,10 @@ RUN VITE_API_HOST=/api npm run build
 FROM node:18-slim as server-builder
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
-RUN apt-get update && apt-get install -y openssl
+RUN \
+  apt-get update -y && \
+  apt-get install -y apt-utils 2>&1 | grep -v "debconf: delaying package configuration, since apt-utils is not installed" && \
+  apt-get install -y --no-install-recommends openssl
 RUN mkdir -p /app && chown -R node:node /app
 WORKDIR /app
 COPY package*.json ./
@@ -29,7 +35,10 @@ RUN npm run build
 FROM node:18-slim as production
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS="yes"
-RUN apt-get update && apt-get install -y openssl
+RUN \
+  apt-get update -y && \
+  apt-get install -y apt-utils 2>&1 | grep -v "debconf: delaying package configuration, since apt-utils is not installed" && \
+  apt-get install -y --no-install-recommends openssl
 RUN mkdir -p /app/node_modules && chown -R node:node /app
 WORKDIR /app
 COPY --from=server-builder /app/package*.json ./
