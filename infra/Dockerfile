@@ -5,7 +5,7 @@ ENV DEBCONF_NOWARNINGS="yes"
 RUN \
   apt-get update -y && \
   apt-get install -y apt-utils 2>&1 | grep -v "debconf: delaying package configuration, since apt-utils is not installed" && \
-  apt-get install -y --no-install-recommends zip curl
+  apt-get install -y --no-install-recommends openssl zip curl
 WORKDIR /app
 ARG VITE_API_HOST
 ENV VITE_API_HOST $VITE_API_HOST
