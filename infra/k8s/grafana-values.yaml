@@ -155,8 +155,8 @@ dashboards:
                     "uid": "PBFA97CFB590B2093"
                   },
                   "editorMode": "builder",
-                  "expr": "rate(http_request_duration_seconds_count{app_kubernetes_io_name=\"expenses\", path=~\"/api/expenses.+\"}[1m])",
-                  "legendFormat": "{{path}}",
+                  "expr": "rate(http_request_duration_seconds_count{app_kubernetes_io_name=\"expenses\", path=~\"/api/expenses.*\"}[1m])",
+                  "legendFormat": "{{method}} {{path}}",
                   "range": true,
                   "refId": "A"
                 }
@@ -352,7 +352,7 @@ dashboards:
               },
               "gridPos": {
                 "h": 8,
-                "w": 12,
+                "w": 9,
                 "x": 0,
                 "y": 11
               },
@@ -445,8 +445,8 @@ dashboards:
               },
               "gridPos": {
                 "h": 8,
-                "w": 12,
-                "x": 12,
+                "w": 6,
+                "x": 9,
                 "y": 11
               },
               "id": 4,
@@ -477,6 +477,170 @@ dashboards:
               ],
               "title": "Cerbos Policy Index Size",
               "type": "timeseries"
+            },
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "P8E80F9AEF21F6940"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "lineInterpolation": "linear",
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  },
+                  "mappings": [],
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": null
+                      },
+                      {
+                        "color": "red",
+                        "value": 80
+                      }
+                    ]
+                  }
+                },
+                "overrides": []
+              },
+              "gridPos": {
+                "h": 8,
+                "w": 9,
+                "x": 15,
+                "y": 11
+              },
+              "id": 16,
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "targets": [
+                {
+                  "datasource": {
+                    "type": "loki",
+                    "uid": "P8E80F9AEF21F6940"
+                  },
+                  "editorMode": "builder",
+                  "expr": "count(rate({app=\"cerbos\"} |= `EFFECT_ALLOW` | json | __error__=`` | line_format `{{.log}}` | json | log_kind = `decision` [1m]))",
+                  "legendFormat": "EFFECT_ALLOW",
+                  "queryType": "range",
+                  "refId": "ALLOW"
+                },
+                {
+                  "datasource": {
+                    "type": "loki",
+                    "uid": "P8E80F9AEF21F6940"
+                  },
+                  "editorMode": "builder",
+                  "expr": "count(rate({app=\"cerbos\"} |= `EFFECT_DENY` | json | __error__=`` | line_format `{{.log}}` | json | log_kind = `decision` [1m]))",
+                  "hide": false,
+                  "legendFormat": "EFFECY_DENY",
+                  "queryType": "range",
+                  "refId": "DENY"
+                },
+                {
+                  "datasource": {
+                    "type": "loki",
+                    "uid": "P8E80F9AEF21F6940"
+                  },
+                  "editorMode": "builder",
+                  "expr": "count(rate({app=\"cerbos\"} |= `PlanResource` | json | __error__=`` | line_format `{{.log}}` | json [1m]))",
+                  "hide": false,
+                  "legendFormat": "PLAN_RESOURCES",
+                  "queryType": "range",
+                  "refId": "PLAN_RESOURCES"
+                }
+              ],
+              "title": "Cerbos Decisions",
+              "type": "timeseries"
+            },
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "P8E80F9AEF21F6940"
+              },
+              "gridPos": {
+                "h": 16,
+                "w": 24,
+                "x": 0,
+                "y": 19
+              },
+              "id": 14,
+              "options": {
+                "dedupStrategy": "none",
+                "enableLogDetails": true,
+                "prettifyLogMessage": true,
+                "showCommonLabels": false,
+                "showLabels": false,
+                "showTime": true,
+                "sortOrder": "Descending",
+                "wrapLogMessage": false
+              },
+              "targets": [
+                {
+                  "datasource": {
+                    "type": "loki",
+                    "uid": "P8E80F9AEF21F6940"
+                  },
+                  "editorMode": "builder",
+                  "expr": "{app=\"cerbos\"} |= `EFFECT_` | json | __error__=`` | line_format `{{.log}}` | json | log_kind = `decision`",
+                  "queryType": "range",
+                  "refId": "A"
+                },
+                {
+                  "datasource": {
+                    "type": "loki",
+                    "uid": "P8E80F9AEF21F6940"
+                  },
+                  "editorMode": "builder",
+                  "expr": "{app=\"cerbos\"} |= `Plan` |= `cerbos.audit` | json | __error__=`` | line_format `{{.log}}` | json",
+                  "hide": false,
+                  "queryType": "range",
+                  "refId": "B"
+                }
+              ],
+              "title": "Decision Logs",
+              "type": "logs"
             }
           ],
           "refresh": "5s",
