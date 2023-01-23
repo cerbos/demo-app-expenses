@@ -86,19 +86,30 @@ router.get("/expenses/:id", async (req, res) => {
         approvedBy: expense.approvedBy?.id ?? null
       }
     },
-    actions: ["view", "view:approver"],
+    actions: ["view", "view:approver", "delete", "update", "approve"],
   });
   span.end();
   usageMetrics.serverChecks++;
 
+  const permissions = {
+    canApprove: decision.isAllowed("approve"),
+    canDelete: decision.isAllowed("delete"),
+    canView: decision.isAllowed("view"),
+    canViewApprover: decision.isAllowed("view:approver"),
+    canEdit: decision.isAllowed("update")
+  }
+
   if (decision.isAllowed("view")) {
     if (!decision.isAllowed("view:approver")) {
       return res.json({
-        ...expense,
-        approvedBy: undefined,
+        expense: {
+          ...expense,
+          approvedBy: undefined,
+        },
+        permissions
       });
     } else {
-      return res.json(expense);
+      return res.json({ expense, permissions });
     }
   }
   return res.status(401).json({ error: "Unauthorized" });
@@ -367,8 +378,33 @@ router.delete("/expenses/:id", async (req, res) => {
   return res.status(401).json({ error: "Unauthorized" });
 });
 
-router.get('/me', (req, res) => {
-  res.json(req.user)
+router.get('/me', async (req, res) => {
+  const span = tracer.startSpan("checkResource")
+  span.setAttributes({
+    principalId: req.user.id,
+    principalRoles: req.user.roles,
+    resourceKind: "features",
+    resourceId: 'features',
+    actions: ["admin", "expenses", "reports"]
+  })
+  const decision = await cerbos.checkResource({
+    principal: req.user,
+    resource: {
+      kind: "features",
+      id: "features",
+      attributes: {
+      }
+    },
+    actions: ["admin", "expenses", "reports"],
+  });
+  res.json({
+    user: req.user,
+    features: {
+      "admin": decision.isAllowed("admin"),
+      "expenses": decision.isAllowed("expenses"),
+      "reports": decision.isAllowed("reports"),
+    }
+  })
 })
 
 router.get("/_/usage", (req, res) => {

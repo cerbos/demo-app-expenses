@@ -5,39 +5,39 @@ volumes:
   grafana-data: {}
 
 services:
-  server:
-    build:
-      context: ../../server
-      dockerfile: Dockerfile.dev
-      target: dev
-    volumes:
-      - ../../server:/app
-      - /app/node_modules
-    ports:
-      - "9980:9980"
-    restart: unless-stopped
-    environment:
-      - PORT=9980
-      - CERBOS_HOST=cerbos:3593
-      - OLTP_COLLECTOR=jaeger:4317
-    depends_on:
-      - cerbos
+  # server:
+  #   build:
+  #     context: ../../server
+  #     dockerfile: Dockerfile.dev
+  #     target: dev
+  #   volumes:
+  #     - ../../server:/app
+  #     - /app/node_modules
+  #   ports:
+  #     - "9980:9980"
+  #   restart: unless-stopped
+  #   environment:
+  #     - PORT=9980
+  #     - CERBOS_HOST=cerbos:3593
+  #     - OLTP_COLLECTOR=jaeger:4317
+  #   depends_on:
+  #     - cerbos
 
-  client:
-    build:
-      context: ../../client
-      dockerfile: Dockerfile.dev
-      target: dev
-    volumes:
-      - ../../client:/client
-      - /app/node_modules
-    ports:
-      - "9990:9990"
-    restart: unless-stopped
-    environment:
-      - VITE_API_HOST=http://localhost:9980/api
-    depends_on:
-      - server
+  # client:
+  #   build:
+  #     context: ../../client
+  #     dockerfile: Dockerfile.dev
+  #     target: dev
+  #   volumes:
+  #     - ../../client:/client
+  #     - /app/node_modules
+  #   ports:
+  #     - "9990:9990"
+  #   restart: unless-stopped
+  #   environment:
+  #     - VITE_API_HOST=http://localhost:9980/api
+  #   depends_on:
+  #     - server
 
   cerbos:
     image: ghcr.io/cerbos/cerbos:latest

@@ -11,11 +11,9 @@ import {
 
 import React from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { cerbosClient } from "../cerbos";
 import { ListAction } from "../components/ListActions";
 import { StatusBadge } from "../components/StatusBadge";
 import { useAuth } from "../context/AuthContext";
-import { useStats } from "../context/StatsContext";
 import { IExpensePermissions } from "../interfaces/IExpensePermissions";
 import { getExpenseQuery } from "../queries/getExpenseQuery";
 
@@ -25,7 +23,6 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { recordClientCheck } = useStats();
 
   const [perms, setPerms] = React.useState<IExpensePermissions>({
     canApprove: false,
@@ -44,25 +41,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
   React.useEffect(() => {
     const fetchPerms = async () => {
       if (!data) return;
-      const decision = await cerbosClient.checkResource({
-        principal: user,
-        resource: {
-          kind: "expense",
-          id: data.id,
-          attributes: {
-            ...data,
-          },
-        },
-        actions: ["view", "view:approver", "edit", "delete", "approve"],
-      });
-      recordClientCheck();
-      setPerms({
-        canApprove: decision.isAllowed("approve") || false,
-        canDelete: decision.isAllowed("delete") || false,
-        canView: decision.isAllowed("view") || false,
-        canViewApprover: decision.isAllowed("view:approver") || false,
-        canEdit: decision.isAllowed("edit") || false,
-      });
+      setPerms(data.permissions);
     };
     fetchPerms();
   }, [user, data]);
@@ -77,7 +56,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
           Expenses
         </Anchor>
         <Anchor component={Link} to={`/expenses/${params.id}`}>
-          {data?.id}
+          {data?.expense.id}
         </Anchor>
       </Breadcrumbs>
       <Paper shadow="xs" p="md">
@@ -100,7 +79,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
                       ID
                     </Text>
                   </td>
-                  <td>{data.id}</td>
+                  <td>{data.expense.id}</td>
                 </tr>
                 <tr>
                   <td>
@@ -108,7 +87,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
                       Submitted By
                     </Text>
                   </td>
-                  <td>{data.ownerId}</td>
+                  <td>{data.expense.ownerId}</td>
                 </tr>
                 <tr>
                   <td>
@@ -116,7 +95,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
                       Submitted At
                     </Text>
                   </td>
-                  <td>{new Date(data.createdAt).toLocaleString()}</td>
+                  <td>{new Date(data.expense.createdAt).toLocaleString()}</td>
                 </tr>
                 <tr>
                   <td>
@@ -124,7 +103,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
                       Vendor
                     </Text>
                   </td>
-                  <td>{data.vendor}</td>
+                  <td>{data.expense.vendor}</td>
                 </tr>
                 <tr>
                   <td>
@@ -133,7 +112,10 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
                     </Text>
                   </td>
                   <td>
-                    {`$ ${data.amount}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    {`$ ${data.expense.amount}`.replace(
+                      /\B(?=(\d{3})+(?!\d))/g,
+                      ","
+                    )}
                   </td>
                 </tr>
                 <tr>
@@ -142,7 +124,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
                       Region
                     </Text>
                   </td>
-                  <td>{data.region}</td>
+                  <td>{data.expense.region}</td>
                 </tr>
                 <tr>
                   <td>
@@ -151,7 +133,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
                     </Text>
                   </td>
                   <td>
-                    <StatusBadge status={data.status} />
+                    <StatusBadge status={data.expense.status} />
                   </td>
                 </tr>
                 {perms.canViewApprover && (
@@ -161,17 +143,21 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
                         Approved By
                       </Text>
                     </td>
-                    <td>{data.approvedById}</td>
+                    <td>{data.expense.approvedById}</td>
                   </tr>
                 )}
                 <tr>
                   <td></td>
                   <td>
                     <ListAction
-                      expense={data}
+                      expense={data.expense}
                       hideDetails
+                      permissions={data.permissions}
                       onDelete={() => {
                         navigate(`/expenses`, { replace: true });
+                      }}
+                      onUpdate={() => {
+                        refetch();
                       }}
                     />
                   </td>

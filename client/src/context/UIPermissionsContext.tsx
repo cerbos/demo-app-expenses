@@ -1,6 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
-import { cerbosClient } from "../cerbos";
+
 import { UIPermissions } from "../interfaces/UIPermissions";
+import { getFeaturesQuery } from "../queries/getFeaturesQuery";
 import { useAuth } from "./AuthContext";
 import { useStats } from "./StatsContext";
 
@@ -16,6 +18,8 @@ function UIPermissionsProvider({ children }: UIPermissionsProviderProps) {
   const { user } = useAuth();
   const { recordClientCheck } = useStats();
 
+  const { data } = getFeaturesQuery();
+
   const [perms, setPerms] = React.useState<UIPermissions>({
     expenses: false,
     reports: false,
@@ -23,24 +27,8 @@ function UIPermissionsProvider({ children }: UIPermissionsProviderProps) {
   });
 
   React.useEffect(() => {
-    const fetchPerms = async () => {
-      const decision = await cerbosClient.checkResource({
-        principal: user,
-        resource: {
-          kind: "features",
-          id: "features",
-        },
-        actions: ["expenses", "reports", "admin"],
-      });
-      recordClientCheck();
-      setPerms({
-        expenses: decision.isAllowed("expenses") || false,
-        reports: decision.isAllowed("reports") || false,
-        admin: decision.isAllowed("admin") || false,
-      });
-    };
-    fetchPerms();
-  }, [user]);
+    if (data) setPerms(data);
+  }, [data]);
 
   return (
     <UIPermissionsContext.Provider value={perms}>

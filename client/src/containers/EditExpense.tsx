@@ -15,9 +15,6 @@ import {
 import { useForm } from "@mantine/form";
 import React, { useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { cerbosClient } from "../cerbos";
-import { useAuth } from "../context/AuthContext";
-import { useStats } from "../context/StatsContext";
 import { IExpense } from "../interfaces/Expense";
 import { IExpensePermissions } from "../interfaces/IExpensePermissions";
 import { editExpenseMutation } from "../queries/editExpenseMutation";
@@ -28,8 +25,6 @@ interface Props {}
 export const EditExpensesContainer: React.FC<Props> = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { recordClientCheck } = useStats();
   const form = useForm<IExpense>({
     initialValues: {
       id: "",
@@ -63,35 +58,9 @@ export const EditExpensesContainer: React.FC<Props> = () => {
 
   useEffect(() => {
     if (!data) return;
-    form.setValues(data);
+    form.setValues(data.expense);
+    setPerms(data.permissions);
   }, [data]);
-
-  // Check permissions
-  React.useEffect(() => {
-    const fetchPerms = async () => {
-      if (!data) return;
-      const decision = await cerbosClient.checkResource({
-        principal: user,
-        resource: {
-          kind: "expense",
-          id: data.id,
-          attributes: {
-            ...data,
-          },
-        },
-        actions: ["view", "view:approver", "edit", "delete", "approve"],
-      });
-      recordClientCheck();
-      setPerms({
-        canApprove: decision.isAllowed("approve") || false,
-        canDelete: decision.isAllowed("delete") || false,
-        canView: decision.isAllowed("view") || false,
-        canViewApprover: decision.isAllowed("view:approver") || false,
-        canEdit: decision.isAllowed("edit") || false,
-      });
-    };
-    fetchPerms();
-  }, [user, data]);
 
   return (
     <Container size="sm" px="lg">
@@ -136,7 +105,7 @@ export const EditExpensesContainer: React.FC<Props> = () => {
                         ID
                       </Text>
                     </td>
-                    <td>{data.id}</td>
+                    <td>{data.expense.id}</td>
                   </tr>
                   <tr>
                     <td>
@@ -144,7 +113,7 @@ export const EditExpensesContainer: React.FC<Props> = () => {
                         Submitted By
                       </Text>
                     </td>
-                    <td>{data.ownerId}</td>
+                    <td>{data.expense.ownerId}</td>
                   </tr>
                   <tr>
                     <td>
@@ -152,7 +121,7 @@ export const EditExpensesContainer: React.FC<Props> = () => {
                         Submitted At
                       </Text>
                     </td>
-                    <td>{data.createdAt}</td>
+                    <td>{data.expense.createdAt}</td>
                   </tr>
                   <tr>
                     <td>

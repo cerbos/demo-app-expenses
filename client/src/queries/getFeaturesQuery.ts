@@ -1,21 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-import { IExpenseResponse } from "../interfaces/Expense";
+import { UIPermissions } from "../interfaces/UIPermissions";
 
-export const getExpenseQuery = ({ id }: { id: string }) => {
+export const getFeaturesQuery = () => {
   const { user } = useAuth();
   return useQuery(
-    [user.id, "expenses", id],
-    (): Promise<IExpenseResponse> =>
+    [user.id, "features"],
+    (): Promise<UIPermissions> =>
       axios
-        .get(`${import.meta.env.VITE_API_HOST}/expenses/${id}`, {
+        .get(`${import.meta.env.VITE_API_HOST}/me`, {
           headers: {
             Authorization: user.id,
           },
         })
         .then((res) => {
-          return res.data;
+          return res.data.features;
         })
   );
 };
+
+

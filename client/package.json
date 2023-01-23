@@ -6,11 +6,9 @@
   "scripts": {
     "dev": "vite --host --port 9990 --clearScreen=false",
     "build": "tsc && vite build",
-    "preview": "vite preview",
-    "build:cerbos-lite": "../cerbos/generate-cerbos-lite.sh ../cerbos/policies public"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@cerbos/lite": "^0.1.0-alpha",
     "@emotion/react": "^11.10.0",
     "@mantine/core": "^5.0.2",
     "@mantine/dates": "^5.0.2",
