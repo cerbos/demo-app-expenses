@@ -410,6 +410,7 @@ router.get('/me', async (req, res) => {
 router.get("/_/usage", (req, res) => {
   return res.json(usageMetrics);
 });
+
 router.post("/_/usage/reset", (req, res) => {
   usageMetrics = {
     serverChecks: 0,
