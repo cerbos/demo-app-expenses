@@ -10,7 +10,7 @@ cerbos:
       driver: "git"
       git:
         protocol: https
-        url: https://github.com/cerbos/cerbos-argo-workflow.git
+        url: https://github.com/cerbos/demo-app-expenses.git
         branch: main
         subDir: cerbos
         updatePollInterval: 0
