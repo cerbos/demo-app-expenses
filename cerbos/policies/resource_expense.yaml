@@ -72,7 +72,7 @@ resourcePolicy:
               - expr: request.resource.attr.status == "OPEN"
 
     # A `principal` that belongs to "FINANCE" role is allowed to perform "approve"
-    # action if the amount is <$10000 and they did not create it
+    # action if the amount is <$50000 and they did not create it
     - actions: ["approve"]
       effect: EFFECT_ALLOW
       derivedRoles:
@@ -81,7 +81,7 @@ resourcePolicy:
         match:
           all:
             of:
-              - expr: request.resource.attr.amount < 10000
+              - expr: request.resource.attr.amount < 50000
               - expr: request.resource.attr.ownerId != request.principal.id
               - expr: request.resource.attr.status == "OPEN"
 
