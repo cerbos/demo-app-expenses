@@ -11,4 +11,4 @@ connect-argo:
 connect-cerbos:
 	kubectl -n default port-forward svc/cerbos 9005:3592
 submit-job:
-	argo submit -n argo --watch https://raw.githubusercontent.com/cerbos/cerbos-argo-workflow/main/ci.yaml -p branch=main -p repoPath=/cerbos -p repo=https://github.com/cerbos/demo-app-expenses.git
+	argo submit -n argo --watch https://raw.githubusercontent.com/cerbos/cerbos-argo-workflow/main/ci.yaml -p branch=main -p repoPath=/cerbos -p repo=https://github.com/cerbos/demo-app-expenses.git -p cerbosHost=cerbos.default.svc.cluster.local:3593
