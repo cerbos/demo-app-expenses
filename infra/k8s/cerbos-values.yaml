@@ -11,8 +11,8 @@ cerbos:
       git:
         protocol: https
         url: https://github.com/cerbos/demo-app-expenses.git
-        branch: main
-        subDir: cerbos
+        branch: demo-video
+        subDir: cerbos/policies
         updatePollInterval: 0
     telemetry:
       disabled: true
