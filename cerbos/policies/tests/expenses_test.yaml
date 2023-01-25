@@ -232,7 +232,7 @@ tests:
       - principal: frank
         resource: expense3
         actions:
-          approve: EFFECT_DENY
+          approve: EFFECT_ALLOW
       - principal: derek
         resource: expense3
         actions:
