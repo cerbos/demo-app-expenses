@@ -19,7 +19,8 @@ services:
   #   environment:
   #     - PORT=9980
   #     - CERBOS_HOST=cerbos:3593
-  #     - OLTP_COLLECTOR=jaeger:4317
+  #     - OTLP_PROTOCOL=grpc
+  #     - OTLP_ENDPOINT=http://jaeger:4317
   #   depends_on:
   #     - cerbos
 
@@ -90,4 +91,3 @@ services:
     volumes:
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - grafana-data:/var/lib/grafana
-            

@@ -36,8 +36,10 @@ spec:
               value: {{ .Values.service.port | quote }}
             - name: CERBOS_HOST
               value: {{ .Values.expenses.cerbosHost }}
-            - name: OLTP_COLLECTOR
-              value: {{ .Values.expenses.oltpCollector }}
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: grpc
+            - name OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.expenses.otlpEndpoint }}
             - name: NODE_ENV
               value: {{ .Values.expenses.nodeEnv }}
             - name: SERVE_STATIC
