@@ -19,12 +19,15 @@ export const editExpenseMutation = ({ id, onError, onSuccess }: EditProps) => {
   const { user } = useAuth();
   return useMutation(
     async (data: UpdateParams): Promise<IExpense> => {
-      const res = await axios
-        .patch(`${import.meta.env.VITE_API_HOST}/expenses/${id}`, data, {
+      const res = await axios.patch(
+        `${import.meta.env.VITE_API_HOST}/expenses/${id}`,
+        data,
+        {
           headers: {
             Authorization: `${user.id}`,
           },
-        });
+        }
+      );
       return res.data;
     },
     {
@@ -32,4 +35,4 @@ export const editExpenseMutation = ({ id, onError, onSuccess }: EditProps) => {
       onError: () => onError && onError(),
     }
   );
-}
+};

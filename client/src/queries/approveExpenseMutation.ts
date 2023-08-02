@@ -10,19 +10,26 @@ interface EditProps {
 }
 
 interface ApproveParams {
-  action: "approve" | "reject"
+  action: "approve" | "reject";
 }
 
-export const approveExpenseMutation = ({ id, onError, onSuccess }: EditProps) => {
+export const approveExpenseMutation = ({
+  id,
+  onError,
+  onSuccess,
+}: EditProps) => {
   const { user } = useAuth();
   return useMutation(
     async (data: ApproveParams): Promise<IExpense> => {
-      const res = await axios
-        .post(`${import.meta.env.VITE_API_HOST}/expenses/${id}/${data.action}`, data, {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_HOST}/expenses/${id}/${data.action}`,
+        data,
+        {
           headers: {
             Authorization: `${user.id}`,
           },
-        });
+        }
+      );
       return res.data;
     },
     {
@@ -30,4 +37,4 @@ export const approveExpenseMutation = ({ id, onError, onSuccess }: EditProps) =>
       onError: () => onError && onError(),
     }
   );
-}
+};

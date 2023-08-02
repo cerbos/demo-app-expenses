@@ -1,4 +1,4 @@
-import queryPlanToPrisma from "@cerbos/orm-prisma";
+import { PlanKind, queryPlanToPrisma } from "@cerbos/orm-prisma";
 import express from "express";
 import { cerbos } from "./cerbos";
 import { prisma } from "./db";
@@ -12,13 +12,13 @@ let usageMetrics = {
 };
 
 router.get("/expenses", async (req, res) => {
-  const span = tracer.startSpan("planResources")
+  const span = tracer.startSpan("planResources");
   span.setAttributes({
     principalId: req.user.id,
     principalRoles: req.user.roles,
     resourceKind: "expense",
-    actions: ["view"]
-  })
+    actions: ["view"],
+  });
   const queryPlan = await cerbos.planResources({
     principal: req.user,
     resource: { kind: "expense" },
@@ -37,19 +37,33 @@ router.get("/expenses", async (req, res) => {
     },
   });
 
-  const expenses = await prisma.expense.findMany({
-    where: filters,
-    include: {
-      owner: true,
-      approvedBy: true,
-    },
-    orderBy: {
-      createdAt: "asc",
-    }
-  })
+  if (filters.kind === PlanKind.ALWAYS_ALLOWED) {
+    const expenses = await prisma.expense.findMany({
+      include: {
+        owner: true,
+        approvedBy: true,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
 
-  return res.json(expenses);
-
+    return res.json(expenses);
+  } else if (filters.kind === PlanKind.ALWAYS_DENIED) {
+    res.json({ expenses: [] });
+  } else {
+    const expenses = await prisma.expense.findMany({
+      where: filters.filters,
+      include: {
+        owner: true,
+        approvedBy: true,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+    return res.json(expenses);
+  }
 });
 
 router.get("/expenses/:id", async (req, res) => {
@@ -60,17 +74,17 @@ router.get("/expenses/:id", async (req, res) => {
     include: {
       owner: true,
       approvedBy: true,
-    }
-  })
+    },
+  });
   if (!expense) return res.status(404).json({ error: "Expense not found" });
-  const span = tracer.startSpan("checkResource")
+  const span = tracer.startSpan("checkResource");
   span.setAttributes({
     principalId: req.user.id,
     principalRoles: req.user.roles,
     resourceKind: "expense",
     resourceId: expense.id,
-    actions: ["view", "view:approver"]
-  })
+    actions: ["view", "view:approver"],
+  });
   const decision = await cerbos.checkResource({
     principal: req.user,
     resource: {
@@ -83,8 +97,8 @@ router.get("/expenses/:id", async (req, res) => {
         status: expense.status,
         ownerId: expense.owner.id,
         createdAt: expense.createdAt.toISOString(),
-        approvedBy: expense.approvedBy?.id ?? null
-      }
+        approvedBy: expense.approvedBy?.id ?? null,
+      },
     },
     actions: ["view", "view:approver", "delete", "update", "approve"],
   });
@@ -96,8 +110,8 @@ router.get("/expenses/:id", async (req, res) => {
     canDelete: decision.isAllowed("delete"),
     canView: decision.isAllowed("view"),
     canViewApprover: decision.isAllowed("view:approver"),
-    canEdit: decision.isAllowed("update")
-  }
+    canEdit: decision.isAllowed("update"),
+  };
 
   if (decision.isAllowed("view")) {
     if (!decision.isAllowed("view:approver")) {
@@ -106,7 +120,7 @@ router.get("/expenses/:id", async (req, res) => {
           ...expense,
           approvedBy: undefined,
         },
-        permissions
+        permissions,
       });
     } else {
       return res.json({ expense, permissions });
@@ -116,19 +130,19 @@ router.get("/expenses/:id", async (req, res) => {
 });
 
 router.post("/expenses", async (req, res) => {
-  const span = tracer.startSpan("checkResource")
+  const span = tracer.startSpan("checkResource");
   span.setAttributes({
     principalId: req.user.id,
     principalRoles: req.user.roles,
     resourceKind: "expense",
-    actions: ["create"]
-  })
+    actions: ["create"],
+  });
   const decision = await cerbos.checkResource({
     principal: req.user,
     resource: {
       kind: "expense",
       id: "new",
-      attributes: {}
+      attributes: {},
     },
     actions: ["create"],
   });
@@ -151,7 +165,7 @@ router.post("/expenses", async (req, res) => {
   } else {
     return res.status(401).json({ error: "Unauthorized" });
   }
-})
+});
 
 router.patch("/expenses/:id", async (req, res) => {
   const expense = await prisma.expense.findUnique({
@@ -161,17 +175,17 @@ router.patch("/expenses/:id", async (req, res) => {
     include: {
       owner: true,
       approvedBy: true,
-    }
-  })
+    },
+  });
   if (!expense) return res.status(404).json({ error: "Expense not found" });
-  const span = tracer.startSpan("checkResource")
+  const span = tracer.startSpan("checkResource");
   span.setAttributes({
     principalId: req.user.id,
     principalRoles: req.user.roles,
     resourceKind: "expense",
     resourceId: expense.id,
-    actions: ["update"]
-  })
+    actions: ["update"],
+  });
   const decision = await cerbos.checkResource({
     principal: req.user,
     resource: {
@@ -184,8 +198,8 @@ router.patch("/expenses/:id", async (req, res) => {
         status: expense.status,
         ownerId: expense.owner.id,
         createdAt: expense.createdAt.toISOString(),
-        approvedBy: expense.approvedBy?.id ?? null
-      }
+        approvedBy: expense.approvedBy?.id ?? null,
+      },
     },
     actions: ["update"],
   });
@@ -217,17 +231,17 @@ router.post("/expenses/:id/approve", async (req, res) => {
     include: {
       owner: true,
       approvedBy: true,
-    }
-  })
+    },
+  });
   if (!expense) return res.status(404).json({ error: "Expense not found" });
-  const span = tracer.startSpan("checkResource")
+  const span = tracer.startSpan("checkResource");
   span.setAttributes({
     principalId: req.user.id,
     principalRoles: req.user.roles,
     resourceKind: "expense",
     resourceId: expense.id,
-    actions: ["approve"]
-  })
+    actions: ["approve"],
+  });
   const decision = await cerbos.checkResource({
     principal: req.user,
     resource: {
@@ -240,8 +254,8 @@ router.post("/expenses/:id/approve", async (req, res) => {
         status: expense.status,
         ownerId: expense.owner.id,
         createdAt: expense.createdAt.toISOString(),
-        approvedBy: expense.approvedBy?.id ?? null
-      }
+        approvedBy: expense.approvedBy?.id ?? null,
+      },
     },
     actions: ["approve"],
   });
@@ -275,17 +289,17 @@ router.post("/expenses/:id/reject", async (req, res) => {
     include: {
       owner: true,
       approvedBy: true,
-    }
-  })
+    },
+  });
   if (!expense) return res.status(404).json({ error: "Expense not found" });
-  const span = tracer.startSpan("checkResource")
+  const span = tracer.startSpan("checkResource");
   span.setAttributes({
     principalId: req.user.id,
     principalRoles: req.user.roles,
     resourceKind: "expense",
     resourceId: expense.id,
-    actions: ["approve"]
-  })
+    actions: ["approve"],
+  });
   const decision = await cerbos.checkResource({
     principal: req.user,
     resource: {
@@ -298,8 +312,8 @@ router.post("/expenses/:id/reject", async (req, res) => {
         status: expense.status,
         ownerId: expense.owner.id,
         createdAt: expense.createdAt.toISOString(),
-        approvedBy: expense.approvedBy?.id ?? null
-      }
+        approvedBy: expense.approvedBy?.id ?? null,
+      },
     },
     actions: ["approve"],
   });
@@ -333,18 +347,18 @@ router.delete("/expenses/:id", async (req, res) => {
     include: {
       owner: true,
       approvedBy: true,
-    }
-  })
+    },
+  });
   if (!expense) return res.status(404).json({ error: "Expense not found" });
 
-  const span = tracer.startSpan("checkResource")
+  const span = tracer.startSpan("checkResource");
   span.setAttributes({
     principalId: req.user.id,
     principalRoles: req.user.roles,
     resourceKind: "expense",
     resourceId: expense.id,
-    actions: ["delete"]
-  })
+    actions: ["delete"],
+  });
   const decision = await cerbos.checkResource({
     principal: req.user,
     resource: {
@@ -357,8 +371,8 @@ router.delete("/expenses/:id", async (req, res) => {
         status: expense.status,
         ownerId: expense.owner.id,
         createdAt: expense.createdAt.toISOString(),
-        approvedBy: expense.approvedBy?.id ?? null
-      }
+        approvedBy: expense.approvedBy?.id ?? null,
+      },
     },
     actions: ["delete"],
   });
@@ -368,9 +382,9 @@ router.delete("/expenses/:id", async (req, res) => {
   if (decision.isAllowed("delete")) {
     await prisma.expense.delete({
       where: {
-        id: expense.id
-      }
-    })
+        id: expense.id,
+      },
+    });
     return res.json({
       message: "expense deleted",
     });
@@ -378,34 +392,33 @@ router.delete("/expenses/:id", async (req, res) => {
   return res.status(401).json({ error: "Unauthorized" });
 });
 
-router.get('/me', async (req, res) => {
-  const span = tracer.startSpan("checkResource")
+router.get("/me", async (req, res) => {
+  const span = tracer.startSpan("checkResource");
   span.setAttributes({
     principalId: req.user.id,
     principalRoles: req.user.roles,
     resourceKind: "features",
-    resourceId: 'features',
-    actions: ["admin", "expenses", "reports"]
-  })
+    resourceId: "features",
+    actions: ["admin", "expenses", "reports"],
+  });
   const decision = await cerbos.checkResource({
     principal: req.user,
     resource: {
       kind: "features",
       id: "features",
-      attributes: {
-      }
+      attributes: {},
     },
     actions: ["admin", "expenses", "reports"],
   });
   res.json({
     user: req.user,
     features: {
-      "admin": decision.isAllowed("admin"),
-      "expenses": decision.isAllowed("expenses"),
-      "reports": decision.isAllowed("reports"),
-    }
-  })
-})
+      admin: decision.isAllowed("admin"),
+      expenses: decision.isAllowed("expenses"),
+      reports: decision.isAllowed("reports"),
+    },
+  });
+});
 
 router.get("/_/usage", (req, res) => {
   return res.json(usageMetrics);

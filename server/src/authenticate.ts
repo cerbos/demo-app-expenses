@@ -1,4 +1,3 @@
-
 import { Request, Response, NextFunction } from "express";
 import { prisma } from "./db";
 import log from "./logger";
@@ -14,9 +13,9 @@ async function authenticate(req: Request, res: Response, next: NextFunction) {
   try {
     const user = await prisma.user.findUnique({
       where: {
-        id: req.headers["authorization"]
-      }
-    })
+        id: req.headers["authorization"],
+      },
+    });
     if (!user) {
       res.status(401).send("Unauthorized");
     } else {
@@ -26,7 +25,7 @@ async function authenticate(req: Request, res: Response, next: NextFunction) {
         attributes: {
           department: user.department,
           region: user.region || undefined,
-        }
+        },
       };
       next();
     }

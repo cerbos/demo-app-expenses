@@ -5,6 +5,7 @@ name: demo-app-expenses
 volumes:
   prometheus_data: {}
   grafana-data: {}
+  loki-data: {}
 
 services:
   # server:
@@ -85,7 +86,6 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
-    container_name: prometheus
     restart: unless-stopped
     volumes:
       - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
@@ -117,7 +117,7 @@ services:
       - "3100"
     volumes:
       # directory must be created first, with uid:gid 10001:10001
-      - ./loki/data:/loki
+      - loki-data:/loki
 
   promtail:
     image: grafana/promtail:2.8.0
