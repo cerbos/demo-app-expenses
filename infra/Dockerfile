@@ -15,7 +15,6 @@ RUN mkdir -p /app && chown -R node:node /app
 WORKDIR /app
 COPY package*.json ./
 COPY --chown=node:node ./server .
-RUN npm config set unsafe-perm true
 USER node
 RUN npm install
 RUN GENERATE_SOURCEMAP=false npm run build
