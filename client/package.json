@@ -18,7 +18,7 @@
     "@mantine/nprogress": "^6.0.0",
     "@tabler/icons": "^2.0.0",
     "@tanstack/react-query": "^4.0.10",
-    "axios": "^0.27.2",
+    "axios": "^1.0.0",
     "dayjs": "^1.11.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
