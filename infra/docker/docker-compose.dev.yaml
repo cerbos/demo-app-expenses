@@ -109,6 +109,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboard.yaml:/etc/grafana/provisioning/dashboards/main.yaml
+      - ./grafana/provisioning/dashboards:/var/lib/grafana/dashboards
       - grafana-data:/var/lib/grafana
 
   loki:
