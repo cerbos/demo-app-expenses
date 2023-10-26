@@ -20,8 +20,8 @@ resourcePolicy:
 
     - actions: ["reports"]
       effect: EFFECT_ALLOW
-      roles:
-        - MANAGER
+      derivedRoles:
+        - FINANCE
 
     - actions: ["tax"]
       effect: EFFECT_ALLOW
