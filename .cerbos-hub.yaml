@@ -1,0 +1,5 @@
+---
+apiVersion: api.cerbos.cloud/v1
+labels:
+  latest:
+    branch: main
