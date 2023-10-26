@@ -31,6 +31,14 @@ export const AppNavBar = () => {
           to="/reports"
         />
       )}
+      {perms.tax && (
+        <NavLink
+          label="Tax"
+          active={location.pathname.startsWith("/tax")}
+          component={Link}
+          to="/tax"
+        />
+      )}
       {perms.admin && (
         <NavLink
           label="Admin"

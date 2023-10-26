@@ -1,6 +1,6 @@
 import { Container, Breadcrumbs, Anchor, Paper, Text } from "@mantine/core";
 
-export const AdminContainer: React.FC = () => {
+export const TaxContainer: React.FC = () => {
   return (
     <Container size="sm" px="lg">
       <Breadcrumbs mb="lg">

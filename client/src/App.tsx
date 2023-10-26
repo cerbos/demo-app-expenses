@@ -15,6 +15,7 @@ import { StatsPanel } from "./containers/StatsPanel";
 import { AppNavBar } from "./components/AppNavBar";
 import { HomeContainer } from "./containers/HomeContainer";
 import { UIPermissionsProvider } from "./context/UIPermissionsContext";
+import { TaxContainer } from "./containers/TaxContainer";
 
 function App() {
   const queryClient = new QueryClient({
@@ -71,6 +72,7 @@ function App() {
                       element={<CreateExpensesContainer />}
                     />
                     <Route path="/reports" element={<ReportsContainer />} />
+                    <Route path="/tax" element={<TaxContainer />} />
                     <Route path="/admin" element={<AdminContainer />} />
                   </Routes>
                   <StatsPanel />
