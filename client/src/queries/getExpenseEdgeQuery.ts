@@ -29,7 +29,17 @@ export const getExpenseEdgeQuery = ({ id }: { id: string }) => {
         },
         actions: ["edit", "delete", "approve"],
       });
-      recordClientCheck(3);
+      // DEMO LOG
+      ["edit", "delete", "approve"].map((action) =>
+        recordClientCheck({
+          ts: new Date(),
+          resourceKind: "expense",
+          resourceId: data.expense.id,
+          principalId: user.id,
+          action,
+          location: "client",
+        })
+      );
 
       return {
         expense: data.expense,

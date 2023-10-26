@@ -16,7 +16,18 @@ export const getFeaturesEdgeQuery = (user: User) => {
       },
       actions: ["admin", "expenses", "reports", "tax"],
     });
-    recordClientCheck(3);
+    // DEMO LOG
+    ["admin", "expenses", "reports", "tax"].map((action) =>
+      recordClientCheck({
+        ts: new Date(),
+        resourceKind: "features",
+        resourceId: "features",
+        principalId: user.id,
+        action,
+        location: "client",
+      })
+    );
+
     return {
       expenses: permissions.isAllowed("expenses") || false,
       reports: permissions.isAllowed("reports") || false,

@@ -5,22 +5,31 @@ import { users } from "./AuthContext";
 
 type StatsProviderProps = { children: React.ReactNode };
 
+interface CheckLog {
+  ts: Date;
+  location: "server" | "client";
+  principalId: string;
+  resourceKind: string;
+  resourceId: string;
+  action: string;
+}
+
 interface StatsContext {
   stats: Stats;
-  recordClientCheck: (count: number) => void;
-  setServerChecks: (count: number) => void;
+  recordClientCheck: (data: CheckLog) => void;
+  setServerChecks: (data: CheckLog[]) => void;
   reset: () => void;
 }
 
 interface Stats {
-  clientChecks: number;
-  serverChecks: number;
+  clientChecks: CheckLog[];
+  serverChecks: CheckLog[];
 }
 
 const StatsContext = React.createContext<StatsContext>({
   stats: {
-    clientChecks: 0,
-    serverChecks: 0,
+    clientChecks: [],
+    serverChecks: [],
   },
   recordClientCheck: () => {},
   setServerChecks: () => {},
@@ -29,22 +38,22 @@ const StatsContext = React.createContext<StatsContext>({
 
 function StatsProvider({ children }: StatsProviderProps) {
   const [stats, setStats] = React.useState<Stats>({
-    clientChecks: 0,
-    serverChecks: 0,
+    clientChecks: [],
+    serverChecks: [],
   });
 
   return (
     <StatsContext.Provider
       value={{
         stats,
-        recordClientCheck: (count) => {
+        recordClientCheck: (data: CheckLog) => {
           setStats((state) => {
-            return { ...state, clientChecks: state.clientChecks + count };
+            return { ...state, clientChecks: [...state.clientChecks, data] };
           });
         },
-        setServerChecks: (count) => {
+        setServerChecks: (data) => {
           setStats((state) => {
-            return { ...state, serverChecks: count };
+            return { ...state, serverChecks: data };
           });
         },
         reset: () => {
@@ -58,8 +67,8 @@ function StatsProvider({ children }: StatsProviderProps) {
             }
           );
           setStats({
-            clientChecks: 0,
-            serverChecks: 0,
+            clientChecks: [],
+            serverChecks: [],
           });
         },
       }}
@@ -89,7 +98,14 @@ export function StatsChecker(): React.ReactElement {
           },
         })
         .then((res) => {
-          setServerChecks(res.data.serverChecks);
+          setServerChecks(
+            (res.data.server as any[]).map((event) => {
+              return {
+                ...event,
+                ts: new Date(event.ts),
+              };
+            })
+          );
         }),
     {
       refetchInterval: 1000,

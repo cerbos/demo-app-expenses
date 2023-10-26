@@ -7,9 +7,16 @@ import { tracer } from "./tracing";
 const router = express.Router();
 
 // Metrics
-let usageMetrics = {
-  serverChecks: 0,
-};
+interface CheckLog {
+  ts: Date;
+  location: "server";
+  principalId: string;
+  resourceKind: string;
+  resourceId: string;
+  action: string;
+}
+
+let serverChecks: CheckLog[] = [];
 
 router.get("/expenses", async (req, res) => {
   const span = tracer.startSpan("planResources");
@@ -25,7 +32,17 @@ router.get("/expenses", async (req, res) => {
     action: "view",
   });
   span.end();
-  usageMetrics.serverChecks = usageMetrics.serverChecks + 1;
+
+  // METRICS FOR DEMO
+  serverChecks.push({
+    ts: new Date(),
+    location: "server",
+    principalId: req.user.id,
+    resourceKind: "expense",
+    resourceId: "LIST",
+    action: "view",
+  });
+
   const filters = queryPlanToPrisma({
     queryPlan: queryPlan,
     fieldNameMapper: {
@@ -103,7 +120,17 @@ router.get("/expenses/:id", async (req, res) => {
     actions: ["view", "view:approver"],
   });
   span.end();
-  usageMetrics.serverChecks = usageMetrics.serverChecks + 2;
+  // METRICS FOR DEMO
+  ["view", "view:approver"].map((action) =>
+    serverChecks.push({
+      ts: new Date(),
+      location: "server",
+      principalId: req.user.id,
+      resourceKind: "expense",
+      resourceId: expense.id,
+      action,
+    })
+  );
 
   const permissions = {
     canViewApprover: decision.isAllowed("view:approver"),
@@ -143,7 +170,17 @@ router.post("/expenses", async (req, res) => {
     actions: ["create"],
   });
   span.end();
-  usageMetrics.serverChecks = usageMetrics.serverChecks + 1;
+  // METRICS FOR DEMO
+  ["create"].map((action) =>
+    serverChecks.push({
+      ts: new Date(),
+      location: "server",
+      principalId: req.user.id,
+      resourceKind: "expense",
+      resourceId: "new",
+      action,
+    })
+  );
 
   if (decision.isAllowed("create")) {
     const expense = await prisma.expense.create({
@@ -200,7 +237,17 @@ router.patch("/expenses/:id", async (req, res) => {
     actions: ["update"],
   });
   span.end();
-  usageMetrics.serverChecks = usageMetrics.serverChecks + 1;
+  // METRICS FOR DEMO
+  ["update"].map((action) =>
+    serverChecks.push({
+      ts: new Date(),
+      location: "server",
+      principalId: req.user.id,
+      resourceKind: "expense",
+      resourceId: expense.id,
+      action,
+    })
+  );
 
   if (decision.isAllowed("update")) {
     const updatedExpense = await prisma.expense.update({
@@ -255,7 +302,17 @@ router.post("/expenses/:id/approve", async (req, res) => {
     },
     actions: ["approve"],
   });
-  usageMetrics.serverChecks = usageMetrics.serverChecks + 1;
+  // METRICS FOR DEMO
+  ["approve"].map((action) =>
+    serverChecks.push({
+      ts: new Date(),
+      location: "server",
+      principalId: req.user.id,
+      resourceKind: "expense",
+      resourceId: expense.id,
+      action,
+    })
+  );
   span.end();
 
   if (decision.isAllowed("approve")) {
@@ -314,7 +371,17 @@ router.post("/expenses/:id/reject", async (req, res) => {
     },
     actions: ["approve"],
   });
-  usageMetrics.serverChecks = usageMetrics.serverChecks + 1;
+  // METRICS FOR DEMO
+  ["approve"].map((action) =>
+    serverChecks.push({
+      ts: new Date(),
+      location: "server",
+      principalId: req.user.id,
+      resourceKind: "expense",
+      resourceId: expense.id,
+      action,
+    })
+  );
   span.end();
 
   if (decision.isAllowed("approve")) {
@@ -375,7 +442,17 @@ router.delete("/expenses/:id", async (req, res) => {
     actions: ["delete"],
   });
   span.end();
-  usageMetrics.serverChecks = usageMetrics.serverChecks + 1;
+  // METRICS FOR DEMO
+  ["delete"].map((action) =>
+    serverChecks.push({
+      ts: new Date(),
+      location: "server",
+      principalId: req.user.id,
+      resourceKind: "expense",
+      resourceId: expense.id,
+      action,
+    })
+  );
 
   if (decision.isAllowed("delete")) {
     await prisma.expense.delete({
@@ -397,13 +474,11 @@ router.get("/me", async (req, res) => {
 });
 
 router.get("/_/usage", (req, res) => {
-  return res.json(usageMetrics);
+  return res.json({ server: serverChecks });
 });
 
 router.post("/_/usage/reset", (req, res) => {
-  usageMetrics = {
-    serverChecks: 0,
-  };
+  serverChecks = [];
   return res.json();
 });
 
