@@ -5,7 +5,7 @@ storage:
  driver: bundle
  bundle:
    remote:
-     bundleLabel: latest # The label to load policies for
+     bundleLabel: production # The label to load policies for
      connection:
       apiEndpoint: https://api.stg-spitfire.cerbos.tech
       bootstrapEndpoint: https://cdn.stg-spitfire.cerbos.tech
