@@ -3,6 +3,8 @@
 apiVersion: api.cerbos.dev/v1
 resourcePolicy:
   version: "default"
+  importDerivedRoles:
+    - common_roles
   resource: "features"
   rules:
     - actions: ["*"]
