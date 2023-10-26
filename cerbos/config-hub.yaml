@@ -12,7 +12,7 @@ storage:
    credentials:
      clientID: "LDLARHIJ0263" # ClientID
      clientSecret: "cerbos_bR6j/jsfjUp5YOVToLXZpEqrrhPoofH7LQWUcOZTBgc" # ClientSecret
-     workspaceSecret: "CERBOS-1R1QC149ECJO6-UK8GJ2C92L0WENGYLCJ69S9FSSRYHTR6Q8HTWTF200QXV2ZY8W2Q4EY8Q2" # WorkspaceSecret to decrypt the bundles -- generated during workspace creation
+     workspaceSecret: "CERBOS-1R1QC149ECJO6-M9N8DQN80WP9AU5Y2ZXHSP7RE534ADD73W3G7F648WFAE0PFSV8S2YY8TD" # WorkspaceSecret to decrypt the bundles -- generated during workspace creation
 tracing:
   serviceName: cerbos
   sampleProbability: 1
