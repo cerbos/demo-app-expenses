@@ -21,7 +21,7 @@ export const StatsPanel = () => {
         margin: 5,
         color: "white",
         borderRadius: 5,
-        width: 900,
+        width: 1000,
       }}
     >
       <Group spacing="sm" grow>
