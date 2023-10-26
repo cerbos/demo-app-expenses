@@ -14,6 +14,7 @@ interface CheckLog {
   resourceKind: string;
   resourceId: string;
   action: string;
+  allowed: boolean;
 }
 
 let serverChecks: CheckLog[] = [];
@@ -41,6 +42,7 @@ router.get("/expenses", async (req, res) => {
     resourceKind: "expense",
     resourceId: "LIST",
     action: "view",
+    allowed: true,
   });
 
   const filters = queryPlanToPrisma({
@@ -129,6 +131,7 @@ router.get("/expenses/:id", async (req, res) => {
       resourceKind: "expense",
       resourceId: expense.id,
       action,
+      allowed: decision.isAllowed(action) || false,
     })
   );
 
@@ -179,6 +182,7 @@ router.post("/expenses", async (req, res) => {
       resourceKind: "expense",
       resourceId: "new",
       action,
+      allowed: decision.isAllowed(action) || false,
     })
   );
 
@@ -246,6 +250,7 @@ router.patch("/expenses/:id", async (req, res) => {
       resourceKind: "expense",
       resourceId: expense.id,
       action,
+      allowed: decision.isAllowed(action) || false,
     })
   );
 
@@ -311,6 +316,7 @@ router.post("/expenses/:id/approve", async (req, res) => {
       resourceKind: "expense",
       resourceId: expense.id,
       action,
+      allowed: decision.isAllowed(action) || false,
     })
   );
   span.end();
@@ -380,6 +386,7 @@ router.post("/expenses/:id/reject", async (req, res) => {
       resourceKind: "expense",
       resourceId: expense.id,
       action,
+      allowed: decision.isAllowed(action) || false,
     })
   );
   span.end();
@@ -451,6 +458,7 @@ router.delete("/expenses/:id", async (req, res) => {
       resourceKind: "expense",
       resourceId: expense.id,
       action,
+      allowed: decision.isAllowed(action) || false,
     })
   );
 

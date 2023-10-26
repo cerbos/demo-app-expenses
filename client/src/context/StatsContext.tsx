@@ -12,6 +12,7 @@ interface CheckLog {
   resourceKind: string;
   resourceId: string;
   action: string;
+  allowed: boolean;
 }
 
 interface StatsContext {

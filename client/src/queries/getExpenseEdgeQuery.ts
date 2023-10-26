@@ -38,6 +38,7 @@ export const getExpenseEdgeQuery = ({ id }: { id: string }) => {
           principalId: user.id,
           action,
           location: "client",
+          allowed: permissions.isAllowed(action) || false,
         })
       );
 

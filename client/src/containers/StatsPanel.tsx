@@ -24,27 +24,6 @@ export const StatsPanel = () => {
         width: 900,
       }}
     >
-      {/* <Table
-        sx={{
-          color: "white",
-        }}
-      >
-        <tbody>
-          <tr>
-            <td colSpan={2}>
-              <b>Cerbos Authorization Checks</b>
-            </td>
-          </tr>
-          <tr>
-            <td align="right">Browser:</td>
-            <td>{stats.clientChecks.length}</td>
-          </tr>
-          <tr>
-            <td align="right">Server:</td>
-            <td>{stats.serverChecks.length}</td>
-          </tr>
-        </tbody>
-      </Table> */}
       <Group spacing="sm" grow>
         <div>
           <b>Cerbos Authorization Checks</b>
@@ -126,6 +105,13 @@ export const StatsPanel = () => {
               >
                 Action
               </th>
+              <th
+                style={{
+                  color: "white",
+                }}
+              >
+                Decision
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -133,11 +119,23 @@ export const StatsPanel = () => {
               return (
                 <tr key={i}>
                   <td>{entry.ts.toISOString()}</td>
-                  <td>{entry.location}</td>
+                  <td
+                    style={{
+                      backgroundColor:
+                        entry.location === "server" ? "blue" : "purple",
+                    }}
+                  >
+                    {entry.location}
+                  </td>
                   <td>{entry.principalId}</td>
                   <td>{entry.resourceKind}</td>
                   <td>{entry.resourceId}</td>
                   <td>{entry.action}</td>
+                  <td
+                    style={{ backgroundColor: entry.allowed ? "green" : "red" }}
+                  >
+                    {entry.allowed ? "ALLOW" : "DENY"}
+                  </td>
                 </tr>
               );
             })}

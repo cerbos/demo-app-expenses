@@ -25,6 +25,7 @@ export const getFeaturesEdgeQuery = (user: User) => {
         principalId: user.id,
         action,
         location: "client",
+        allowed: permissions.isAllowed(action) || false,
       })
     );
 
