@@ -31,4 +31,4 @@ resourcePolicy:
     - actions: ["tax"]
       effect: EFFECT_ALLOW
       derivedRoles:
-        - FINANCE
+        - FINANCE_MANAGER
