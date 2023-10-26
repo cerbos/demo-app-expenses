@@ -7,58 +7,44 @@ type StatsProviderProps = { children: React.ReactNode };
 
 interface StatsContext {
   stats: Stats;
-  recordClientCheck: () => void;
+  recordClientCheck: (count: number) => void;
+  setServerChecks: (count: number) => void;
   reset: () => void;
 }
 
 interface Stats {
   clientChecks: number;
-  serverCalls: number;
+  serverChecks: number;
 }
 
 const StatsContext = React.createContext<StatsContext>({
   stats: {
     clientChecks: 0,
-    serverCalls: 0,
+    serverChecks: 0,
   },
   recordClientCheck: () => {},
+  setServerChecks: () => {},
   reset: () => {},
 });
 
 function StatsProvider({ children }: StatsProviderProps) {
   const [stats, setStats] = React.useState<Stats>({
     clientChecks: 0,
-    serverCalls: 0,
+    serverChecks: 0,
   });
-
-  useQuery(
-    ["stats"],
-    (): Promise<{ serverChecks: number }> =>
-      axios
-        .get(`${import.meta.env.VITE_API_HOST}/_/usage`, {
-          headers: {
-            Authorization: users.ian.id,
-          },
-        })
-        .then((res) => {
-          setStats({
-            ...stats,
-            serverCalls: res.data.serverChecks,
-          });
-          return res.data;
-        }),
-    {
-      refetchInterval: 1000,
-    }
-  );
 
   return (
     <StatsContext.Provider
       value={{
         stats,
-        recordClientCheck: () => {
+        recordClientCheck: (count) => {
           setStats((state) => {
-            return { ...state, clientChecks: state.clientChecks + 1 };
+            return { ...state, clientChecks: state.clientChecks + count };
+          });
+        },
+        setServerChecks: (count) => {
+          setStats((state) => {
+            return { ...state, serverChecks: count };
           });
         },
         reset: () => {
@@ -73,7 +59,7 @@ function StatsProvider({ children }: StatsProviderProps) {
           );
           setStats({
             clientChecks: 0,
-            serverCalls: 0,
+            serverChecks: 0,
           });
         },
       }}
@@ -89,6 +75,27 @@ function useStats() {
     throw new Error("useStats must be used within a StatsContext");
   }
   return context;
+}
+
+export function StatsChecker(): React.ReactElement {
+  const { setServerChecks } = useStats();
+  useQuery(
+    ["stats"],
+    (): Promise<void> =>
+      axios
+        .get(`${import.meta.env.VITE_API_HOST}/_/usage`, {
+          headers: {
+            Authorization: users.ian.id,
+          },
+        })
+        .then((res) => {
+          setServerChecks(res.data.serverChecks);
+        }),
+    {
+      refetchInterval: 1000,
+    }
+  );
+  return <div />;
 }
 
 export { StatsProvider, useStats };

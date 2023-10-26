@@ -10,7 +10,7 @@ import { EditExpensesContainer } from "./containers/EditExpense";
 import { AdminContainer } from "./containers/AdminContainer";
 import { ReportsContainer } from "./containers/ReportsContainer";
 import { CreateExpensesContainer } from "./containers/CreateExpense";
-import { StatsProvider } from "./context/StatsContext";
+import { StatsChecker, StatsProvider } from "./context/StatsContext";
 import { StatsPanel } from "./containers/StatsPanel";
 import { AppNavBar } from "./components/AppNavBar";
 import { HomeContainer } from "./containers/HomeContainer";
@@ -22,13 +22,15 @@ function App() {
       queries: {
         refetchOnWindowFocus: true,
         retry: false,
+        cacheTime: 1000 * 5, // 5 seconds
       },
     },
   });
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <StatsProvider>
+    <StatsProvider>
+      <QueryClientProvider client={queryClient}>
+        <StatsChecker />
         <MantineProvider withGlobalStyles withNormalizeCSS>
           <Router>
             <AuthProvider>
@@ -77,8 +79,8 @@ function App() {
             </AuthProvider>
           </Router>
         </MantineProvider>
-      </StatsProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </StatsProvider>
   );
 }
 

@@ -25,7 +25,7 @@ router.get("/expenses", async (req, res) => {
     action: "view",
   });
   span.end();
-  usageMetrics.serverChecks++;
+  usageMetrics.serverChecks = usageMetrics.serverChecks + 1;
   const filters = queryPlanToPrisma({
     queryPlan: queryPlan,
     fieldNameMapper: {
@@ -100,17 +100,13 @@ router.get("/expenses/:id", async (req, res) => {
         approvedBy: expense.approvedBy?.id ?? null,
       },
     },
-    actions: ["view", "view:approver", "delete", "update", "approve"],
+    actions: ["view", "view:approver"],
   });
   span.end();
-  usageMetrics.serverChecks++;
+  usageMetrics.serverChecks = usageMetrics.serverChecks + 2;
 
   const permissions = {
-    canApprove: decision.isAllowed("approve"),
-    canDelete: decision.isAllowed("delete"),
-    canView: decision.isAllowed("view"),
     canViewApprover: decision.isAllowed("view:approver"),
-    canEdit: decision.isAllowed("update"),
   };
 
   if (decision.isAllowed("view")) {
@@ -147,7 +143,7 @@ router.post("/expenses", async (req, res) => {
     actions: ["create"],
   });
   span.end();
-  usageMetrics.serverChecks++;
+  usageMetrics.serverChecks = usageMetrics.serverChecks + 1;
 
   if (decision.isAllowed("create")) {
     const expense = await prisma.expense.create({
@@ -204,7 +200,7 @@ router.patch("/expenses/:id", async (req, res) => {
     actions: ["update"],
   });
   span.end();
-  usageMetrics.serverChecks++;
+  usageMetrics.serverChecks = usageMetrics.serverChecks + 1;
 
   if (decision.isAllowed("update")) {
     const updatedExpense = await prisma.expense.update({
@@ -259,6 +255,7 @@ router.post("/expenses/:id/approve", async (req, res) => {
     },
     actions: ["approve"],
   });
+  usageMetrics.serverChecks = usageMetrics.serverChecks + 1;
   span.end();
 
   if (decision.isAllowed("approve")) {
@@ -317,6 +314,7 @@ router.post("/expenses/:id/reject", async (req, res) => {
     },
     actions: ["approve"],
   });
+  usageMetrics.serverChecks = usageMetrics.serverChecks + 1;
   span.end();
 
   if (decision.isAllowed("approve")) {
@@ -377,7 +375,7 @@ router.delete("/expenses/:id", async (req, res) => {
     actions: ["delete"],
   });
   span.end();
-  usageMetrics.serverChecks++;
+  usageMetrics.serverChecks = usageMetrics.serverChecks + 1;
 
   if (decision.isAllowed("delete")) {
     await prisma.expense.delete({
@@ -393,30 +391,8 @@ router.delete("/expenses/:id", async (req, res) => {
 });
 
 router.get("/me", async (req, res) => {
-  const span = tracer.startSpan("checkResource");
-  span.setAttributes({
-    principalId: req.user.id,
-    principalRoles: req.user.roles,
-    resourceKind: "features",
-    resourceId: "features",
-    actions: ["admin", "expenses", "reports"],
-  });
-  const decision = await cerbos.checkResource({
-    principal: req.user,
-    resource: {
-      kind: "features",
-      id: "features",
-      attributes: {},
-    },
-    actions: ["admin", "expenses", "reports"],
-  });
   res.json({
     user: req.user,
-    features: {
-      admin: decision.isAllowed("admin"),
-      expenses: decision.isAllowed("expenses"),
-      reports: decision.isAllowed("reports"),
-    },
   });
 });
 

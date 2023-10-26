@@ -8,7 +8,7 @@ import {
   Text,
   Group,
 } from "@mantine/core";
-import { IconArrowRight, IconArrowRightCircle } from "@tabler/icons-react";
+import { IconArrowRight } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { useUIPermissions } from "../context/UIPermissionsContext";
 
@@ -66,6 +66,32 @@ export const HomeContainer: React.FC = () => {
               </Group>
               <Text size="sm" color="dimmed">
                 Reports for the management team
+              </Text>
+            </Card>
+          )}
+        </Grid.Col>
+        <Grid.Col span={4}>
+          {perms.tax && (
+            <Card
+              p="xl"
+              component={Link}
+              to="/tax"
+              sx={(theme) => ({
+                boxShadow: theme.shadows.xs,
+                "&:hover": {
+                  boxShadow: theme.shadows.sm,
+                },
+                "&:active": {
+                  backgroundColor: theme.colors.gray[1],
+                },
+              })}
+            >
+              <Group>
+                <Text weight={500}>Tax</Text>
+                <IconArrowRight size={15} />
+              </Group>
+              <Text size="sm" color="dimmed">
+                Tax reporting for Finance team
               </Text>
             </Card>
           )}

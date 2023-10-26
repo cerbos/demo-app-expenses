@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/Policy.schema.json
 ---
 apiVersion: api.cerbos.dev/v1
 resourcePolicy:
@@ -19,3 +20,13 @@ resourcePolicy:
       effect: EFFECT_ALLOW
       roles:
         - MANAGER
+
+    - actions: ["tax"]
+      effect: EFFECT_ALLOW
+      roles:
+        - ADMIN
+
+    - actions: ["tax"]
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - FINANCE

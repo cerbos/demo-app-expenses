@@ -58,7 +58,7 @@ services:
       - cerbos
 
   cerbos:
-    image: ghcr.io/cerbos/cerbos:latest
+    image: ghcr.io/cerbos/cerbos:dev
     ports:
       - "3592:3592"
       - "3593:3593"
@@ -68,8 +68,7 @@ services:
     environment:
       - CERBOS_NO_TELEMETRY=1
     volumes:
-      - ../../cerbos/policies:/policies
-      - ../../cerbos/config.yaml:/config.yaml
+      - ../../cerbos/config-hub.yaml:/config.yaml
     restart: unless-stopped
     depends_on:
       - jaeger

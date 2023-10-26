@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/TestSuite.schema.json
+
 name: Expenses test suite
 description: Tests for verifying the expense resource policy
 options:

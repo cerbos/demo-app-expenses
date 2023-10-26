@@ -2,7 +2,7 @@ import * as React from "react";
 
 type AuthProviderProps = { children: React.ReactNode };
 
-type User = {
+export type User = {
   id: string;
   roles: string[];
   attributes: {

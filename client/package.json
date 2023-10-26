@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cerbos/lite": "^0.5.0-beta",
     "@emotion/react": "^11.10.0",
     "@mantine/core": "^6.0.0",
     "@mantine/dates": "^6.0.0",

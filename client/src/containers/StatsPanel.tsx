@@ -30,13 +30,13 @@ export const StatsPanel = () => {
               <b>Cerbos Authorization Checks</b>
             </td>
           </tr>
-          {/* <tr>
+          <tr>
             <td align="right">Browser:</td>
             <td>{stats.clientChecks}</td>
-          </tr> */}
+          </tr>
           <tr>
             <td align="right">Server:</td>
-            <td>{stats.serverCalls}</td>
+            <td>{stats.serverChecks}</td>
           </tr>
         </tbody>
       </Table>

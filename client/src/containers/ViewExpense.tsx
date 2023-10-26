@@ -15,7 +15,7 @@ import { ListAction } from "../components/ListActions";
 import { StatusBadge } from "../components/StatusBadge";
 import { useAuth } from "../context/AuthContext";
 import { IExpensePermissions } from "../interfaces/IExpensePermissions";
-import { getExpenseQuery } from "../queries/getExpenseQuery";
+import { getExpenseEdgeQuery } from "../queries/getExpenseEdgeQuery";
 
 interface Props {}
 
@@ -33,7 +33,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
   });
 
   // Get Expense
-  const { isLoading, error, data, refetch } = getExpenseQuery({
+  const { isLoading, error, data, refetch } = getExpenseEdgeQuery({
     id: params.id!,
   });
 

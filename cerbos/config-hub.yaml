@@ -1,0 +1,28 @@
+server:
+  httpListenAddr: ":3592"
+  grpcListenAddr: ":3593"
+storage:
+ driver: bundle
+ bundle:
+   remote:
+     bundleLabel: latest # The label to load policies for
+     connection:
+      apiEndpoint: https://api.stg-spitfire.cerbos.tech
+      bootstrapEndpoint: https://cdn.stg-spitfire.cerbos.tech
+   credentials:
+     clientID: "LDLARHIJ0263" # ClientID
+     clientSecret: "cerbos_bR6j/jsfjUp5YOVToLXZpEqrrhPoofH7LQWUcOZTBgc" # ClientSecret
+     workspaceSecret: "CERBOS-1R1QC149ECJO6-UK8GJ2C92L0WENGYLCJ69S9FSSRYHTR6Q8HTWTF200QXV2ZY8W2Q4EY8Q2" # WorkspaceSecret to decrypt the bundles -- generated during workspace creation
+tracing:
+  serviceName: cerbos
+  sampleProbability: 1
+  exporter: otlp
+  otlp:
+    collectorEndpoint: "jaeger:4318"
+audit:
+  enabled: true
+  accessLogsEnabled: true
+  decisionLogsEnabled: true
+  backend: file
+  file:
+    path: stdout
