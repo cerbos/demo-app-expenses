@@ -32,3 +32,4 @@ resourcePolicy:
       effect: EFFECT_ALLOW
       derivedRoles:
         - FINANCE_MANAGER
+        - FINANCE
