@@ -8,24 +8,24 @@ volumes:
   loki-data: {}
 
 services:
-  server:
-    build:
-      context: ../../server
-      dockerfile: Dockerfile.dev
-      target: dev
-    volumes:
-      - ../../server:/app
-      - /app/node_modules
-    ports:
-      - "9980:9980"
-    restart: unless-stopped
-    environment:
-      - PORT=9980
-      - CERBOS_HOST=cerbos:3593
-      - OTLP_PROTOCOL=grpc
-      - OTLP_ENDPOINT=http://jaeger:4317
-    depends_on:
-      - cerbos
+  # server:
+  #   build:
+  #     context: ../../server
+  #     dockerfile: Dockerfile.dev
+  #     target: dev
+  #   volumes:
+  #     - ../../server:/app
+  #     - /app/node_modules
+  #   ports:
+  #     - "9980:9980"
+  #   restart: unless-stopped
+  #   environment:
+  #     - PORT=9980
+  #     - CERBOS_HOST=cerbos:3593
+  #     - OTLP_PROTOCOL=grpc
+  #     - OTLP_ENDPOINT=http://jaeger:4317
+  #   depends_on:
+  #     - cerbos
 
   # client:
   #   build:
@@ -43,19 +43,19 @@ services:
   #   depends_on:
   #     - server
 
-  # app:
-  #   build:
-  #     context: ../../
-  #     dockerfile: infra/Dockerfile
-  #   ports:
-  #     - "9980:9980"
-  #   restart: unless-stopped
-  #   environment:
-  #     - PORT=9980
-  #     - CERBOS_HOST=cerbos:3593
-  #     - OTLP_ENDPOINT=http://jaeger:4317/v1/traces
-  #   depends_on:
-  #     - cerbos
+  app:
+    build:
+      context: ../../
+      dockerfile: infra/Dockerfile
+    ports:
+      - "9980:9980"
+    restart: unless-stopped
+    environment:
+      - PORT=9980
+      - CERBOS_HOST=cerbos:3593
+      - OTLP_ENDPOINT=http://jaeger:4317/v1/traces
+    depends_on:
+      - cerbos
 
   cerbos:
     image: ghcr.io/cerbos/cerbos:dev
