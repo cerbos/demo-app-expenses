@@ -28,7 +28,7 @@ tests:
       - principal: sally
         resource: expense1
         actions:
-          view: EFFECT_ALLOW
+          view: EFFECT_DENY
           view:approver: EFFECT_DENY
           delete: EFFECT_ALLOW
           update: EFFECT_ALLOW
