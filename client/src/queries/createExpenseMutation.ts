@@ -16,8 +16,8 @@ interface CreateParams {
 
 export const createExpenseMutation = ({ onError, onSuccess }: CreateProps) => {
   const { user } = useAuth();
-  return useMutation(
-    async (data: CreateParams): Promise<IExpense> => {
+  return useMutation({
+    mutationFn: async (data: CreateParams): Promise<IExpense> => {
       const res = await axios.post(
         `${import.meta.env.VITE_API_HOST}/expenses`,
         data,
@@ -29,11 +29,9 @@ export const createExpenseMutation = ({ onError, onSuccess }: CreateProps) => {
       );
       return res.data;
     },
-    {
-      onSuccess(data, variables, context) {
-        onSuccess && onSuccess(data);
-      },
-      onError: () => onError && onError(),
-    }
-  );
+    onSuccess(data, variables, context) {
+      onSuccess && onSuccess(data);
+    },
+    onError: () => onError && onError(),
+  });
 };

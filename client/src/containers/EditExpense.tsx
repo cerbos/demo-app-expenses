@@ -101,7 +101,7 @@ export const EditExpensesContainer: React.FC<Props> = () => {
                 <tbody>
                   <tr>
                     <td>
-                      <Text align="right" weight={500} color="dimmed">
+                      <Text ta="right" fw={500} c="dimmed">
                         ID
                       </Text>
                     </td>
@@ -109,7 +109,7 @@ export const EditExpensesContainer: React.FC<Props> = () => {
                   </tr>
                   <tr>
                     <td>
-                      <Text align="right" weight={500} color="dimmed">
+                      <Text ta="right" fw={500} c="dimmed">
                         Submitted By
                       </Text>
                     </td>
@@ -117,7 +117,7 @@ export const EditExpensesContainer: React.FC<Props> = () => {
                   </tr>
                   <tr>
                     <td>
-                      <Text align="right" weight={500} color="dimmed">
+                      <Text ta="right" fw={500} c="dimmed">
                         Submitted At
                       </Text>
                     </td>
@@ -125,7 +125,7 @@ export const EditExpensesContainer: React.FC<Props> = () => {
                   </tr>
                   <tr>
                     <td>
-                      <Text align="right" weight={500} color="dimmed">
+                      <Text ta="right" fw={500} c="dimmed">
                         Vendor
                       </Text>
                     </td>
@@ -135,25 +135,23 @@ export const EditExpensesContainer: React.FC<Props> = () => {
                   </tr>
                   <tr>
                     <td>
-                      <Text align="right" weight={500} color="dimmed">
+                      <Text ta="right" fw={500} c="dimmed">
                         Amount
                       </Text>
                     </td>
                     <td>
                       <NumberInput
                         {...form.getInputProps("amount")}
-                        parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
-                        formatter={(value) =>
-                          !Number.isNaN(parseFloat(value!))
-                            ? `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                            : "$ "
-                        }
+                        allowNegative={false}
+                        prefix="$"
+                        decimalScale={2}
+                        fixedDecimalScale
                       />
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      <Text align="right" weight={500} color="dimmed">
+                      <Text ta="right" fw={500} c="dimmed">
                         Region
                       </Text>
                     </td>
@@ -173,9 +171,8 @@ export const EditExpensesContainer: React.FC<Props> = () => {
                     <td>
                       <Button
                         type="submit"
-                        size="sm"
-                        compact
-                        disabled={mutation.isLoading}
+                        size="compact-sm"
+                        disabled={mutation.isPending}
                       >
                         Save
                       </Button>

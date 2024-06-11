@@ -19,8 +19,8 @@ export const approveExpenseMutation = ({
   onSuccess,
 }: EditProps) => {
   const { user } = useAuth();
-  return useMutation(
-    async (data: ApproveParams): Promise<IExpense> => {
+  return useMutation({
+    mutationFn: async (data: ApproveParams): Promise<IExpense> => {
       const res = await axios.post(
         `${import.meta.env.VITE_API_HOST}/expenses/${id}/${data.action}`,
         data,
@@ -32,9 +32,7 @@ export const approveExpenseMutation = ({
       );
       return res.data;
     },
-    {
-      onSuccess: () => onSuccess && onSuccess(),
-      onError: () => onError && onError(),
-    }
-  );
+    onSuccess: () => onSuccess && onSuccess(),
+    onError: () => onError && onError(),
+  });
 };

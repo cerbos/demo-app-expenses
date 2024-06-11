@@ -31,9 +31,9 @@ function StatsProvider({ children }: StatsProviderProps) {
     serverCalls: 0,
   });
 
-  useQuery(
-    ["stats"],
-    (): Promise<{ serverChecks: number }> =>
+  useQuery({
+    queryKey: ["stats"],
+    queryFn: (): Promise<{ serverChecks: number }> =>
       axios
         .get(`${import.meta.env.VITE_API_HOST}/_/usage`, {
           headers: {
@@ -47,10 +47,9 @@ function StatsProvider({ children }: StatsProviderProps) {
           });
           return res.data;
         }),
-    {
-      refetchInterval: 1000,
-    }
-  );
+
+    refetchInterval: 1000,
+  });
 
   return (
     <StatsContext.Provider

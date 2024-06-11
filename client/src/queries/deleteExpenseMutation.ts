@@ -16,8 +16,8 @@ export const deleteExpenseMutation = ({
   onError,
 }: DeleteProps) => {
   const { user } = useAuth();
-  return useMutation(
-    async (): Promise<IExpense> => {
+  return useMutation({
+    mutationFn: async (): Promise<IExpense> => {
       const res = await axios.delete(
         `${import.meta.env.VITE_API_HOST}/expenses/${id}`,
         {
@@ -28,9 +28,7 @@ export const deleteExpenseMutation = ({
       );
       return res.data;
     },
-    {
-      onSuccess: () => onSuccess && onSuccess(),
-      onError: () => onError && onError(),
-    }
-  );
+    onSuccess: () => onSuccess && onSuccess(),
+    onError: () => onError && onError(),
+  });
 };

@@ -20,7 +20,7 @@ export const StatsPanel = () => {
       }}
     >
       <Table
-        sx={{
+        style={{
           color: "white",
         }}
       >
@@ -40,9 +40,9 @@ export const StatsPanel = () => {
           </tr>
         </tbody>
       </Table>
-      <Group position="right">
+      <Group justify="flex-end">
         <Button
-          compact
+          size="compact-sm"
           color={"red"}
           onClick={() => {
             reset();

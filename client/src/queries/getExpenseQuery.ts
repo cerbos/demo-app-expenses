@@ -5,9 +5,9 @@ import { IExpenseResponse } from "../interfaces/Expense";
 
 export const getExpenseQuery = ({ id }: { id: string }) => {
   const { user } = useAuth();
-  return useQuery(
-    [user.id, "expenses", id],
-    (): Promise<IExpenseResponse> =>
+  return useQuery({
+    queryKey: [user.id, "expenses", id],
+    queryFn: (): Promise<IExpenseResponse> =>
       axios
         .get(`${import.meta.env.VITE_API_HOST}/expenses/${id}`, {
           headers: {
@@ -16,6 +16,6 @@ export const getExpenseQuery = ({ id }: { id: string }) => {
         })
         .then((res) => {
           return res.data;
-        })
-  );
+        }),
+  });
 };

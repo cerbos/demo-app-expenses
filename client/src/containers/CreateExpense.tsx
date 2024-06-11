@@ -77,7 +77,7 @@ export const CreateExpensesContainer: React.FC<Props> = () => {
               <tbody>
                 <tr>
                   <td>
-                    <Text align="right" weight={500} color="dimmed">
+                    <Text ta="right" fw={500} c="dimmed">
                       Submitted By
                     </Text>
                   </td>
@@ -91,7 +91,7 @@ export const CreateExpensesContainer: React.FC<Props> = () => {
                 </tr>
                 <tr>
                   <td>
-                    <Text align="right" weight={500} color="dimmed">
+                    <Text ta="right" fw={500} c="dimmed">
                       Vendor
                     </Text>
                   </td>
@@ -101,7 +101,7 @@ export const CreateExpensesContainer: React.FC<Props> = () => {
                 </tr>
                 <tr>
                   <td>
-                    <Text align="right" weight={500} color="dimmed">
+                    <Text ta="right" fw={500} c="dimmed">
                       Amount ($)
                     </Text>
                   </td>
@@ -111,7 +111,7 @@ export const CreateExpensesContainer: React.FC<Props> = () => {
                 </tr>
                 <tr>
                   <td>
-                    <Text align="right" weight={500} color="dimmed">
+                    <Text ta="right" fw={500} c="dimmed">
                       Region
                     </Text>
                   </td>
@@ -129,7 +129,7 @@ export const CreateExpensesContainer: React.FC<Props> = () => {
                 <tr>
                   <td></td>
                   <td>
-                    <Button type="submit" size="sm" compact>
+                    <Button type="submit" size="compact-sm">
                       Save
                     </Button>
                   </td>

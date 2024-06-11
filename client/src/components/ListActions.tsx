@@ -54,11 +54,10 @@ export const ListAction: React.FC<Props> = ({
   }, [user, expense, permissions]);
 
   return (
-    <Group spacing="sm">
+    <Group>
       {!hideDetails && (
         <Button
-          size="xs"
-          compact
+          size="compact-xs"
           onClick={() => {
             navigate(`/expenses/${expense.id}`);
           }}
@@ -69,8 +68,7 @@ export const ListAction: React.FC<Props> = ({
       {permissions && (
         <>
           <Button
-            size="xs"
-            compact
+            size="compact-xs"
             color={"yellow"}
             disabled={!perms.canEdit}
             onClick={() => {
@@ -80,8 +78,7 @@ export const ListAction: React.FC<Props> = ({
             Edit
           </Button>
           <Button
-            size="xs"
-            compact
+            size="compact-xs"
             color={"green"}
             disabled={!perms.canApprove}
             onClick={() => {
@@ -91,8 +88,7 @@ export const ListAction: React.FC<Props> = ({
             Approve
           </Button>
           <Button
-            size="xs"
-            compact
+            size="compact-xs"
             color={"pink"}
             disabled={!perms.canApprove}
             onClick={() => {

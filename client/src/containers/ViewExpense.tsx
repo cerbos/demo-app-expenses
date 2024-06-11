@@ -75,7 +75,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
               <tbody>
                 <tr>
                   <td>
-                    <Text align="right" weight={500} color="dimmed">
+                    <Text ta="right" fw={500} c="dimmed">
                       ID
                     </Text>
                   </td>
@@ -83,7 +83,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
                 </tr>
                 <tr>
                   <td>
-                    <Text align="right" weight={500} color="dimmed">
+                    <Text ta="right" fw={500} c="dimmed">
                       Submitted By
                     </Text>
                   </td>
@@ -91,7 +91,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
                 </tr>
                 <tr>
                   <td>
-                    <Text align="right" weight={500} color="dimmed">
+                    <Text ta="right" fw={500} c="dimmed">
                       Submitted At
                     </Text>
                   </td>
@@ -99,7 +99,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
                 </tr>
                 <tr>
                   <td>
-                    <Text align="right" weight={500} color="dimmed">
+                    <Text ta="right" fw={500} c="dimmed">
                       Vendor
                     </Text>
                   </td>
@@ -107,7 +107,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
                 </tr>
                 <tr>
                   <td>
-                    <Text align="right" weight={500} color="dimmed">
+                    <Text ta="right" fw={500} c="dimmed">
                       Amount
                     </Text>
                   </td>
@@ -120,7 +120,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
                 </tr>
                 <tr>
                   <td>
-                    <Text align="right" weight={500} color="dimmed">
+                    <Text ta="right" fw={500} c="dimmed">
                       Region
                     </Text>
                   </td>
@@ -128,7 +128,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
                 </tr>
                 <tr>
                   <td>
-                    <Text align="right" weight={500} color="dimmed">
+                    <Text ta="right" fw={500} c="dimmed">
                       Status
                     </Text>
                   </td>
@@ -139,7 +139,7 @@ export const ViewExpensesContainer: React.FC<Props> = () => {
                 {perms.canViewApprover && (
                   <tr>
                     <td>
-                      <Text align="right" weight={500} color="dimmed">
+                      <Text ta="right" fw={500} c="dimmed">
                         Approved By
                       </Text>
                     </td>

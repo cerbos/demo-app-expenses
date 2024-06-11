@@ -5,9 +5,9 @@ import { UIPermissions } from "../interfaces/UIPermissions";
 
 export const getFeaturesQuery = () => {
   const { user } = useAuth();
-  return useQuery(
-    [user.id, "features"],
-    (): Promise<UIPermissions> =>
+  return useQuery({
+    queryKey: [user.id, "features"],
+    queryFn: (): Promise<UIPermissions> =>
       axios
         .get(`${import.meta.env.VITE_API_HOST}/me`, {
           headers: {
@@ -16,6 +16,6 @@ export const getFeaturesQuery = () => {
         })
         .then((res) => {
           return res.data.features;
-        })
-  );
+        }),
+  });
 };

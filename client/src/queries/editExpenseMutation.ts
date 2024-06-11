@@ -17,8 +17,8 @@ interface UpdateParams {
 
 export const editExpenseMutation = ({ id, onError, onSuccess }: EditProps) => {
   const { user } = useAuth();
-  return useMutation(
-    async (data: UpdateParams): Promise<IExpense> => {
+  return useMutation({
+    mutationFn: async (data: UpdateParams): Promise<IExpense> => {
       const res = await axios.patch(
         `${import.meta.env.VITE_API_HOST}/expenses/${id}`,
         data,
@@ -30,9 +30,7 @@ export const editExpenseMutation = ({ id, onError, onSuccess }: EditProps) => {
       );
       return res.data;
     },
-    {
-      onSuccess: () => onSuccess && onSuccess(),
-      onError: () => onError && onError(),
-    }
-  );
+    onSuccess: () => onSuccess && onSuccess(),
+    onError: () => onError && onError(),
+  });
 };

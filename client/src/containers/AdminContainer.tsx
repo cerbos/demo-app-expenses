@@ -8,7 +8,7 @@ export const AdminContainer: React.FC = () => {
         <Anchor href="/admin">Admin</Anchor>
       </Breadcrumbs>
       <Paper shadow="xs" p="md">
-        <Text size={"sm"} sx={{ fontStyle: "italic" }}>
+        <Text size={"sm"} style={{ fontStyle: "italic" }}>
           This would be the admin homepage
         </Text>
       </Paper>

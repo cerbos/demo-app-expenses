@@ -8,7 +8,7 @@ export const ReportsContainer: React.FC = () => {
         <Anchor href="/reports">Reports</Anchor>
       </Breadcrumbs>
       <Paper shadow="xs" p="md">
-        <Text size={"sm"} sx={{ fontStyle: "italic" }}>
+        <Text size={"sm"} style={{ fontStyle: "italic" }}>
           This would be the reports homepage
         </Text>
       </Paper>
