@@ -32,8 +32,8 @@ export const ListExpensesContainer: React.FC = () => {
             Expenses
           </Anchor>
         </Breadcrumbs>
-        <Group position="right">
-          <Button compact component={Link} to="/expenses/new">
+        <Group align="self-end">
+          <Button size="compact-sm" component={Link} to="/expenses/new">
             Submit New
           </Button>
         </Group>

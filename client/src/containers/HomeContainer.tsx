@@ -8,7 +8,7 @@ import {
   Text,
   Group,
 } from "@mantine/core";
-import { IconArrowRight, IconArrowRightCircle } from "@tabler/icons-react";
+import { IconArrowRight } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { useUIPermissions } from "../context/UIPermissionsContext";
 
@@ -21,22 +21,9 @@ export const HomeContainer: React.FC = () => {
       </Breadcrumbs>
       <Grid>
         <Grid.Col span={4}>
-          <Card
-            p="xl"
-            component={Link}
-            to="/expenses"
-            sx={(theme) => ({
-              boxShadow: theme.shadows.xs,
-              "&:hover": {
-                boxShadow: theme.shadows.sm,
-              },
-              "&:active": {
-                backgroundColor: theme.colors.gray[1],
-              },
-            })}
-          >
+          <Card p="xl" component={Link} to="/expenses">
             <Group>
-              <Text weight={500}>Expenses</Text>
+              <Text fw={500}>Expenses</Text>
               <IconArrowRight size={15} />
             </Group>
             <Text size="sm" color="dimmed">
@@ -46,22 +33,9 @@ export const HomeContainer: React.FC = () => {
         </Grid.Col>
         <Grid.Col span={4}>
           {perms.reports && (
-            <Card
-              p="xl"
-              component={Link}
-              to="/reports"
-              sx={(theme) => ({
-                boxShadow: theme.shadows.xs,
-                "&:hover": {
-                  boxShadow: theme.shadows.sm,
-                },
-                "&:active": {
-                  backgroundColor: theme.colors.gray[1],
-                },
-              })}
-            >
+            <Card p="xl" component={Link} to="/reports">
               <Group>
-                <Text weight={500}>Reports</Text>
+                <Text fw={500}>Reports</Text>
                 <IconArrowRight size={15} />
               </Group>
               <Text size="sm" color="dimmed">
@@ -72,22 +46,9 @@ export const HomeContainer: React.FC = () => {
         </Grid.Col>
         <Grid.Col span={4}>
           {perms.admin && (
-            <Card
-              p="xl"
-              component={Link}
-              to="/admin"
-              sx={(theme) => ({
-                boxShadow: theme.shadows.xs,
-                "&:hover": {
-                  boxShadow: theme.shadows.sm,
-                },
-                "&:active": {
-                  backgroundColor: theme.colors.gray[1],
-                },
-              })}
-            >
+            <Card p="xl" component={Link} to="/admin">
               <Group>
-                <Text weight={500}>Admin</Text>
+                <Text fw={500}>Admin</Text>
                 <IconArrowRight size={15} />
               </Group>
               <Text size="sm" color="dimmed">

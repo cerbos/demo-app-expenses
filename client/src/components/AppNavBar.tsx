@@ -1,4 +1,4 @@
-import { Navbar, NavLink } from "@mantine/core";
+import { AppShell, NavLink } from "@mantine/core";
 import { Link, useLocation } from "react-router-dom";
 import { useUIPermissions } from "../context/UIPermissionsContext";
 
@@ -8,7 +8,7 @@ export const AppNavBar = () => {
   const perms = useUIPermissions();
 
   return (
-    <Navbar width={{ base: 300 }}>
+    <AppShell.Navbar>
       <NavLink
         label="Home"
         active={location.pathname == "/"}
@@ -39,6 +39,6 @@ export const AppNavBar = () => {
           to="/admin"
         />
       )}
-    </Navbar>
+    </AppShell.Navbar>
   );
 };
