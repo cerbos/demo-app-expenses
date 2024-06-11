@@ -1,5 +1,5 @@
 
-FROM node:18-slim as client-builder
+FROM node:20-slim as client-builder
 RUN apt-get update && apt-get install -y zip curl
 WORKDIR /app
 ARG VITE_API_HOST
@@ -9,7 +9,7 @@ COPY ./cerbos /cerbos
 RUN npm install
 RUN GENERATE_SOURCEMAP=false VITE_API_HOST=/api npm run build
 
-FROM node:18-slim as server-builder
+FROM node:20-slim as server-builder
 RUN apt-get update && apt-get install -y openssl
 RUN mkdir -p /app && chown -R node:node /app
 WORKDIR /app
@@ -20,7 +20,7 @@ RUN npm install
 RUN GENERATE_SOURCEMAP=false npm run build
 
 
-FROM node:18-slim as production
+FROM node:20-slim as production
 RUN apt-get update && apt-get install -y openssl
 RUN mkdir -p /app && chown -R node:node /app
 WORKDIR /app
